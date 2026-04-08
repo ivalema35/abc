@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Screen — ABC Project Figma Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <style>
+    /* ──────────────────────────────────────────────
+       DESIGN TOKENS — matches figma.md Section 1
+    ────────────────────────────────────────────── */
+    :root {
+      /* Primary */
+      --primary-main:   #696cff;
+      --primary-light:  #e7e7ff;
+      --primary-dark:   #5558e3;
+      --primary-on:     #ffffff;
+
+      /* Neutral */
+      --neutral-bg:       #f5f5f9;
+      --neutral-surface:  #ffffff;
+      --neutral-divider:  #dbdade;
+      --neutral-border:   #e7e7e8;
+      --neutral-disabled: #b9b9b9;
+
+      /* Text */
+      --text-heading:    #333333;
+      --text-primary:    #566a7f;
+      --text-secondary:  #8592a3;
+      --text-on-surface: #697a8d;
+      --text-on-primary: #ffffff;
+
+      /* Status */
+      --status-success:       #28c76f;
+      --status-success-light: #e8f8ee;
+      --status-danger:        #ea5455;
+      --status-danger-light:  #fce8e8;
+
+      /* Gradient */
+      --gradient-login-top:    #f5f5f9;
+      --gradient-login-bottom: #eeeeff;
+
+      /* Spacing */
+      --sp-xs:  4px;
+      --sp-sm:  8px;
+      --sp-md:  16px;
+      --sp-lg:  24px;
+      --sp-xl:  32px;
+      --sp-2xl: 48px;
+
+      /* Shadows */
+      --shadow-card:      0 2px 8px 0 rgba(0,0,0,0.08);
+      --shadow-input-focus: 0 0 0 3px rgba(105,108,255,0.15);
+    }
+
+    /* ──────────────────────────────────────────────
+       RESET & BASE
+    ────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Public Sans', 'Inter', 'Roboto', sans-serif;
+      background: #c9c9d8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 32px 16px;
+    }
+
+    /* ──────────────────────────────────────────────
+       PHONE SHELL (390×844 Figma frame)
+       Frame name: 02_Login
+    ────────────────────────────────────────────── */
+    .phone-shell {
+      width: 390px;
+      height: 844px;
+      border-radius: 44px;
+      background: linear-gradient(180deg, var(--gradient-login-top) 0%, var(--gradient-login-bottom) 100%);
+      box-shadow:
+        0 0 0 8px #1a1a2e,
+        0 0 0 10px #2d2d3f,
+        0 40px 80px rgba(0,0,0,0.35);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ──────────────────────────────────────────────
+       STATUS BAR — Absolute · 390×44 · Transparent
+    ────────────────────────────────────────────── */
+    .status-bar {
+      position: absolute;
+      top: 0; left: 0;
+      width: 390px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px 0;
+      z-index: 10;
+    }
+    .status-bar .time {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-heading);
+    }
+    .status-bar .icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .status-bar .icons span {
+      font-size: 16px;
+      color: var(--text-heading);
+    }
+
+    /* ──────────────────────────────────────────────
+       CONTENT ROOT — Auto Layout · Vertical · Fill
+    ────────────────────────────────────────────── */
+    .content-root {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+    }
+
+    /* StatusBarSpacer — 44px */
+    .status-bar-spacer {
+      flex-shrink: 0;
+      height: 44px;
+      width: 100%;
+    }
+
+    /* ──────────────────────────────────────────────
+       SCROLLABLE CONTENT
+       Padding: 32px top, 24px bottom, 24px H
+       Gap: 24px
+    ────────────────────────────────────────────── */
+    .scrollable-content {
+      flex: 1;
+      width: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 24px 24px;
+      gap: 24px;
+      scrollbar-width: none;
+    }
+    .scrollable-content::-webkit-scrollbar { display: none; }
+
+    /* ──────────────────────────────────────────────
+       BRAND BLOCK — Vertical · Center · Gap 8px
+    ────────────────────────────────────────────── */
+    .brand-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    /* LogoImage — 120×120 · Corner 16px */
+    .logo-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-main) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(105,108,255,0.3);
+    }
+    .logo-image .logo-icon {
+      font-size: 56px;
+      color: var(--primary-on);
+    }
+
+    /* AppName — Display/Large · 24px · Bold · #333333 */
+    .app-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-heading);
+      text-align: center;
+      line-height: 32px;
+    }
+
+    /* AppSubtitle — Body/Medium · 13px · Regular · #8592a3 */
+    .app-subtitle {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      text-align: center;
+      line-height: 18px;
+    }
+
+    /* ──────────────────────────────────────────────
+       LOGIN CARD — Corner 20px · Padding 24px · Gap 16px
+    ────────────────────────────────────────────── */
+    .login-card {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding: 24px;
+      gap: 16px;
+      border-radius: 20px;
+      background: var(--neutral-surface);
+      box-shadow: var(--shadow-card);
+    }
+
+    /* Card Header — Vertical · Gap 4px · bottom padding 8px */
+    .card-header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-bottom: 8px;
+    }
+
+    /* CardTitle — Headline/Large · 18px · SemiBold · #333333 */
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-heading);
+      line-height: 26px;
+    }
+
+    /* CardSubtitle — Body/Medium · 13px · Regular · #8592a3 */
+    .card-subtitle {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 18px;
+    }
+
+    /* Divider — 1px · #dbdade */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: var(--neutral-divider);
+    }
+
+    /* ──────────────────────────────────────────────
+       INPUT/TEXTFIELD COMPONENT (matches figma.md §2.2)
+       Vertical · Gap 4px · Fill Container
+    ────────────────────────────────────────────── */
+    .input-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 100%;
+    }
+
+    /* Label — Label/Large · 12px · SemiBold · #697a8d */
+    .input-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-on-surface);
+      line-height: 16px;
+      transition: color 0.2s;
+    }
+
+    /* InputBox — Horizontal · 52px · Padding 14px · Corner 8px */
+    .input-box {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+      height: 52px;
+      padding: 0 14px;
+      gap: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--neutral-border);
+      background: var(--neutral-surface);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-box:focus-within {
+      border: 1.5px solid var(--primary-main);
+      box-shadow: var(--shadow-input-focus);
+    }
+
+    .input-box:focus-within ~ .input-label,
+    .input-field:focus-within .input-label {
+      color: var(--primary-main);
+    }
+
+    /* Prefix Icon — Material Symbol · 20px · #8592a3 */
+    .prefix-icon {
+      font-family: 'Material Symbols Rounded';
+      font-size: 20px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+      line-height: 1;
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+
+    /* Suffix Icon */
+    .suffix-icon {
+      font-family: 'Material Symbols Rounded';
+      font-size: 20px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+      cursor: pointer;
+      line-height: 1;
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      user-select: none;
+    }
+    .suffix-icon:hover { color: var(--text-primary); }
+
+    /* Input Text — Body/Large · 15px · #333333 */
+    .input-box input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: 'Public Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text-heading);
+      line-height: 22px;
+    }
+    .input-box input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    /* ──────────────────────────────────────────────
+       REMEMBER ME ROW — Horizontal · Gap 8px · Center
+    ────────────────────────────────────────────── */
+    .remember-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    /* Checkbox — 20×20 · Corner 4px · Stroke 1.5px #696cff */
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+    }
+    .checkbox-wrapper input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 1.5px solid var(--primary-main);
+      border-radius: 4px;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .checkbox-wrapper input[type="checkbox"]:checked {
+      background: var(--primary-main);
+    }
+    .checkbox-wrapper input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 6px;
+      height: 10px;
+      border: 2px solid white;
+      border-left: none;
+      border-top: none;
+      transform: rotate(40deg);
+    }
+
+    /* Remember Label — Body/Medium · 13px · #566a7f */
+    .remember-label {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* ──────────────────────────────────────────────
+       BUTTON/PRIMARY COMPONENT (matches figma.md §2.1)
+       Height: 48px · Corner: 8px · Fill: #696cff
+    ────────────────────────────────────────────── */
+    .btn-primary {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 48px;
+      padding: 0 16px;
+      gap: 8px;
+      border-radius: 8px;
+      border: none;
+      background: var(--primary-main);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      outline: none;
+      box-shadow: 0 4px 12px rgba(105,108,255,0.4);
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 6px 16px rgba(105,108,255,0.5);
+    }
+    .btn-primary:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 8px rgba(105,108,255,0.3);
+    }
+
+    /* Button label — Button/Text · 14px · SemiBold · white */
+    .btn-label {
+      font-family: 'Public Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-on-primary);
+      line-height: 20px;
+      letter-spacing: 0.3px;
+    }
+
+    /* Spinner (Loading state) */
+    .btn-spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Loading state toggle */
+    .btn-primary.loading .btn-label { display: none; }
+    .btn-primary.loading .btn-spinner { display: block; }
+    .btn-primary.loading { cursor: wait; pointer-events: none; }
+
+    /* ──────────────────────────────────────────────
+       FOOTER TEXT — Label/Small · 11px · #8592a3 · Center
+    ────────────────────────────────────────────── */
+    .footer-text {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      text-align: center;
+      line-height: 14px;
+      width: 100%;
+    }
+
+    /* ──────────────────────────────────────────────
+       INTERACTION STATES (JS-toggled classes)
+    ────────────────────────────────────────────── */
+    .input-field.error .input-box {
+      border: 1.5px solid var(--status-danger);
+    }
+    .input-field.error .input-label {
+      color: var(--status-danger);
+    }
+    .input-field.error .input-box:focus-within {
+      box-shadow: 0 0 0 3px rgba(234,84,85,0.15);
+    }
+
+    /* HelperText — Label/Small · 11px · #ea5455 · hidden by default */
+    .helper-text {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--status-danger);
+      line-height: 14px;
+      display: none;
+    }
+    .input-field.error .helper-text {
+      display: block;
+    }
+
+    /* ──────────────────────────────────────────────
+       SNACKBAR (Error/Success notification)
+    ────────────────────────────────────────────── */
+    .snackbar {
+      position: absolute;
+      bottom: 24px;
+      left: 16px;
+      right: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: #333333;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      z-index: 100;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+    .snackbar.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .snackbar-text {
+      font-size: 13px;
+      font-weight: 400;
+      color: #ffffff;
+      flex: 1;
+      line-height: 18px;
+    }
+    .snackbar-action {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary-main);
+      cursor: pointer;
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    /* ──────────────────────────────────────────────
+       PREVIEW CONTROLS (outside phone, for demo)
+    ────────────────────────────────────────────── */
+    .preview-label {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a2e;
+      color: #ffffff;
+      font-family: 'Public Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      opacity: 0.85;
+      white-space: nowrap;
+    }
+    .preview-note {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a2e;
+      color: #a3a4cc;
+      font-family: 'Public Sans', sans-serif;
+      font-size: 11px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      opacity: 0.7;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Preview label (outside phone shell) -->
+  <div class="preview-label">02_Login · 390×844px · Sneat Theme · ABC Project</div>
+  <div class="preview-note">Frame: 02_Login · Public Sans · Material Symbols Rounded · Figma Spec V1.0</div>
+
+  <!-- ────────────────────────────────────────────────────────
+       PHONE SHELL — simulates 390×844 Figma frame
+  ──────────────────────────────────────────────────────── -->
+  <div class="phone-shell">
+
+    <!-- STATUS BAR — Absolute · Transparent · 44px -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">
+        <span class="material-symbols-rounded" style="font-size:16px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">signal_cellular_alt</span>
+        <span class="material-symbols-rounded" style="font-size:16px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">wifi</span>
+        <span class="material-symbols-rounded" style="font-size:16px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">battery_5_bar</span>
+      </div>
+    </div>
+
+    <!-- CONTENT ROOT -->
+    <div class="content-root">
+
+      <!-- StatusBarSpacer — 44px -->
+      <div class="status-bar-spacer"></div>
+
+      <!-- SCROLLABLE CONTENT — Padding: 32px top, 24px bottom, 24px H · Gap: 24px -->
+      <div class="scrollable-content" id="scrollContent">
+
+        <!-- ════════════════════════════════════════════
+             BRAND BLOCK
+             Vertical · Center Align · Gap: 8px
+        ════════════════════════════════════════════ -->
+        <div class="brand-block">
+          <!-- LogoImage — 120×120 · Corner 16px -->
+          <div class="logo-image">
+            <span class="logo-icon material-symbols-rounded"
+              style="font-size:56px;color:#fff;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 48;">
+              pets
+            </span>
+          </div>
+          <!-- AppName — Display/Large · 24px · Bold · #333333 -->
+          <div class="app-name">Goal Foundation</div>
+          <!-- AppSubtitle — Body/Medium · 13px · #8592a3 -->
+          <div class="app-subtitle">Animal Birth Control</div>
+        </div>
+
+        <!-- ════════════════════════════════════════════
+             LOGIN CARD
+             Corner: 20px · Padding: 24px · Gap: 16px
+             Fill: #ffffff · shadow/card
+        ════════════════════════════════════════════ -->
+        <div class="login-card">
+
+          <!-- CardHeader — Vertical · Gap 4px · bottom: 8px -->
+          <div class="card-header">
+            <!-- CardTitle — Headline/Large · 18px · SemiBold · #333333 -->
+            <div class="card-title">Welcome Back 🐾</div>
+            <!-- CardSubtitle — Body/Medium · 13px · #8592a3 -->
+            <div class="card-subtitle">Sign in to continue</div>
+          </div>
+
+          <!-- Divider — 1px · #dbdade -->
+          <div class="divider"></div>
+
+          <!-- ──────────────────────────────────────
+               EMAIL FIELD
+               Input/TextField · State: Default
+               Label: "Email Address"
+               Prefix: mail_outline
+          ────────────────────────────────────── -->
+          <div class="input-field" id="emailField">
+            <label class="input-label" for="email">Email Address</label>
+            <div class="input-box">
+              <span class="prefix-icon material-symbols-rounded"
+                style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">
+                mail
+              </span>
+              <input
+                type="email"
+                id="email"
+                placeholder="email@goalf.org"
+                autocomplete="email"
+              />
+            </div>
+            <span class="helper-text">Please enter a valid email address.</span>
+          </div>
+
+          <!-- ──────────────────────────────────────
+               PASSWORD FIELD
+               Input/TextField · State: Default
+               Label: "Password"
+               Prefix: lock_outline · Suffix: visibility_off (toggle)
+          ────────────────────────────────────── -->
+          <div class="input-field" id="passwordField">
+            <label class="input-label" for="password">Password</label>
+            <div class="input-box">
+              <span class="prefix-icon material-symbols-rounded"
+                style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">
+                lock
+              </span>
+              <input
+                type="password"
+                id="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+              />
+              <span
+                class="suffix-icon material-symbols-rounded"
+                id="eyeToggle"
+                title="Toggle password visibility"
+                style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;"
+                onclick="togglePassword()"
+              >
+                visibility_off
+              </span>
+            </div>
+            <span class="helper-text">Password must be at least 6 characters.</span>
+          </div>
+
+          <!-- ──────────────────────────────────────
+               REMEMBER ME ROW
+               Horizontal · Gap: 8px · Center vertical
+          ────────────────────────────────────── -->
+          <div class="remember-row">
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="rememberMe" />
+            </div>
+            <label class="remember-label" for="rememberMe">Remember Me</label>
+          </div>
+
+          <!-- ──────────────────────────────────────
+               SIGN IN BUTTON
+               Button/Primary · State: Default
+               Width: Fill Container · Height: 48px
+          ────────────────────────────────────── -->
+          <button class="btn-primary" id="signInBtn" onclick="handleSignIn()">
+            <div class="btn-spinner"></div>
+            <span class="btn-label">Sign In</span>
+          </button>
+
+        </div><!-- /login-card -->
+
+        <!-- FooterText — Label/Small · 11px · #8592a3 · Center -->
+        <div class="footer-text">Powered by IV Infotech</div>
+
+      </div><!-- /scrollable-content -->
+    </div><!-- /content-root -->
+
+    <!-- ══════════════════════════════════════════════
+         SNACKBAR (error message at bottom)
+    ══════════════════════════════════════════════ -->
+    <div class="snackbar" id="snackbar">
+      <span class="snackbar-text" id="snackbarText">Invalid email or password.</span>
+      <button class="snackbar-action" onclick="hideSnackbar()">DISMISS</button>
+    </div>
+
+  </div><!-- /phone-shell -->
+
+  <!-- ────────────────────────────────────────────────────────
+       INTERACTION SCRIPT
+       Simulates: focus states, eye toggle, form validation,
+       loading state, error Snackbar — as per figma.md
+  ──────────────────────────────────────────────────────── -->
+  <script>
+    // ── Eye toggle (visibility_off / visibility)
+    function togglePassword() {
+      const input = document.getElementById('password');
+      const icon  = document.getElementById('eyeToggle');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility_off';
+      }
+    }
+
+    // ── Focus state: label turns #696cff when input is focused
+    document.querySelectorAll('.input-box input').forEach(input => {
+      const field  = input.closest('.input-field');
+      const label  = field.querySelector('.input-label');
+      const box    = field.querySelector('.input-box');
+
+      input.addEventListener('focus', () => {
+        label.style.color = '#696cff';
+        box.style.borderColor = '#696cff';
+        box.style.borderWidth = '1.5px';
+        box.style.boxShadow = '0 0 0 3px rgba(105,108,255,0.15)';
+        field.classList.remove('error');
+      });
+
+      input.addEventListener('blur', () => {
+        label.style.color = '';
+        box.style.borderColor = '';
+        box.style.borderWidth = '';
+        box.style.boxShadow = '';
+      });
+    });
+
+    // ── Sign In handler (simulates API call flow)
+    function handleSignIn() {
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn      = document.getElementById('signInBtn');
+      let   hasError = false;
+
+      // Clear previous errors
+      document.getElementById('emailField').classList.remove('error');
+      document.getElementById('passwordField').classList.remove('error');
+
+      // Validate email
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('emailField').classList.add('error');
+        hasError = true;
+      }
+
+      // Validate password (min 6)
+      if (!password || password.length < 6) {
+        document.getElementById('passwordField').classList.add('error');
+        hasError = true;
+      }
+
+      if (hasError) {
+        showSnackbar('Please fix the errors above before signing in.');
+        return;
+      }
+
+      // Loading state (Button/Primary · State: Loading)
+      btn.classList.add('loading');
+
+      // Simulate API call delay (1.5s)
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        // Simulate wrong credentials (demo)
+        if (email !== 'admin@goalf.org' || password !== 'Admin@1234') {
+          showSnackbar('Invalid email or password. Please try again.');
+          document.getElementById('emailField').classList.add('error');
+          document.getElementById('passwordField').classList.add('error');
+        } else {
+          showSnackbar('✓ Signed in successfully! Navigating to Dashboard…');
+        }
+      }, 1500);
+    }
+
+    // ── Snackbar helpers
+    function showSnackbar(msg) {
+      const sb = document.getElementById('snackbar');
+      document.getElementById('snackbarText').textContent = msg;
+      sb.classList.add('show');
+      setTimeout(hideSnackbar, 4000);
+    }
+    function hideSnackbar() {
+      document.getElementById('snackbar').classList.remove('show');
+    }
+  </script>
+
+</body>
+</html>

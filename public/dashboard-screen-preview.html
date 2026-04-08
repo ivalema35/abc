@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Screen — ABC Project Figma Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <style>
+    /* ──────────────────────────────────────────────
+       DESIGN TOKENS — figma.md Section 1
+    ────────────────────────────────────────────── */
+    :root {
+      --primary-main:   #696cff;
+      --primary-light:  #e7e7ff;
+      --primary-dark:   #5558e3;
+      --primary-on:     #ffffff;
+
+      --neutral-bg:      #f5f5f9;
+      --neutral-surface: #ffffff;
+      --neutral-divider: #dbdade;
+      --neutral-border:  #e7e7e8;
+
+      --text-heading:    #333333;
+      --text-primary:    #566a7f;
+      --text-secondary:  #8592a3;
+      --text-on-surface: #697a8d;
+
+      --status-success:       #28c76f;
+      --status-success-light: #e8f8ee;
+      --status-danger:        #ea5455;
+      --status-danger-light:  #fce8e8;
+      --status-warning:       #ff9f43;
+      --status-warning-light: #fff3e5;
+      --status-info:          #00cfe8;
+      --status-info-light:    #e0f9fc;
+
+      --shadow-card:    0 2px 8px 0 rgba(0,0,0,0.08);
+      --shadow-topbar:  0 2px 8px 0 rgba(0,0,0,0.08);
+      --shadow-bottomnav: 0 -1px 4px 0 rgba(0,0,0,0.06);
+      --shadow-fab:     0 4px 12px 0 rgba(105,108,255,0.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Public Sans', 'Inter', 'Roboto', sans-serif;
+      background: #c9c9d8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 32px 16px;
+    }
+
+    /* ──────────────────────────────────────────────
+       PHONE SHELL — 390×844px Frame (03_Dashboard)
+    ────────────────────────────────────────────── */
+    .phone-shell {
+      width: 390px;
+      height: 844px;
+      border-radius: 44px;
+      background: var(--neutral-bg);
+      box-shadow:
+        0 0 0 8px #1a1a2e,
+        0 0 0 10px #2d2d3f,
+        0 40px 80px rgba(0,0,0,0.35);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ══════════════════════════════════════════════
+       STATUS BAR — Absolute · 390×44 · Transparent
+    ══════════════════════════════════════════════ */
+    .status-bar {
+      position: absolute;
+      top: 0; left: 0;
+      width: 390px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px 0;
+      z-index: 20;
+      background: transparent;
+    }
+    .status-bar .sb-time {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-heading);
+    }
+    .status-bar .sb-icons {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .status-bar .sb-icons span {
+      font-size: 15px;
+      color: var(--text-heading);
+      font-variation-settings: 'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;
+    }
+
+    /* ══════════════════════════════════════════════
+       TOP APP BAR — Absolute · Top:44 · Height:56
+       Fill:#ffffff · shadow/topBar
+       Horizontal · Padding: 0 16px · Gap: 8px
+    ══════════════════════════════════════════════ */
+    .top-app-bar {
+      position: absolute;
+      top: 44px; left: 0;
+      width: 390px;
+      height: 56px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0 16px;
+      gap: 8px;
+      background: var(--neutral-surface);
+      box-shadow: var(--shadow-topbar);
+      z-index: 15;
+    }
+
+    /* MenuIcon — 24×24 · #566a7f */
+    .icon-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .icon-btn:hover { background: var(--neutral-bg); }
+    .icon-btn .material-symbols-rounded {
+      font-size: 24px;
+      color: var(--text-primary);
+      font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+    }
+
+    /* TitleBlock — Fill Container · Vertical · Gap: 1px */
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      flex: 1;
+    }
+    /* Title — Headline/Medium · 16px · SemiBold · #333333 */
+    .bar-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-heading);
+      line-height: 24px;
+    }
+    /* Subtitle — Label/Small · 11px · #8592a3 */
+    .bar-subtitle {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 14px;
+    }
+
+    /* Spacer */
+    .spacer { flex: 1; }
+
+    /* AvatarCircle — 36×36 · Corner:999px · Fill:#e7e7ff */
+    .avatar-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    /* Initial — 14px · Bold · #696cff */
+    .avatar-initial {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary-main);
+      line-height: 1;
+    }
+
+    /* ══════════════════════════════════════════════
+       SCROLL CONTENT
+       Absolute · Top:100 · Bottom:64 · Width:390
+       Overflow: scroll vertical
+       Padding: 16px · Gap: 16px
+    ══════════════════════════════════════════════ */
+    .scroll-content {
+      position: absolute;
+      top: 100px;
+      left: 0;
+      width: 390px;
+      bottom: 64px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 16px;
+      scrollbar-width: none;
+    }
+    .scroll-content::-webkit-scrollbar { display: none; }
+
+    /* ══════════════════════════════════════════════
+       HERO CARD
+       Corner:16px · Padding:20px · Gap:12px
+       Gradient: 90° #696cff → #9c9eff
+    ══════════════════════════════════════════════ */
+    .hero-card {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding: 20px;
+      gap: 12px;
+      border-radius: 16px;
+      background: linear-gradient(90deg, #696cff 0%, #9c9eff 100%);
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    /* Decorative background circle */
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      top: -40px;
+      right: -30px;
+    }
+    .hero-card::after {
+      content: '';
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      bottom: -20px;
+      right: 60px;
+    }
+
+    /* Greeting — Headline/Medium · 16px · SemiBold · #ffffff */
+    .hero-greeting {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      line-height: 24px;
+      z-index: 1;
+    }
+
+    /* GreetingSubtitle — Body/Medium · 13px · #ffffff 80% */
+    .hero-subtitle {
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.80);
+      line-height: 18px;
+      z-index: 1;
+    }
+
+    /* Progress Bar Wrapper — Fill Container · Height:6px · Corner:999px */
+    .progress-bar-wrapper {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.25);
+      overflow: hidden;
+      z-index: 1;
+    }
+    /* Inner fill — 72% · #ffffff */
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: #ffffff;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Hero stats row */
+    .hero-stats-row {
+      display: flex;
+      flex-direction: row;
+      gap: 24px;
+      z-index: 1;
+    }
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .hero-stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 28px;
+    }
+    .hero-stat-label {
+      font-size: 11px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.75);
+      line-height: 14px;
+    }
+
+    /* ══════════════════════════════════════════════
+       SECTION LABEL — Label/Large · 12px · SemiBold · #697a8d
+    ══════════════════════════════════════════════ */
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-on-surface);
+      line-height: 16px;
+      width: 100%;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════════════════════
+       STATS GRID — Vertical · Gap:12px
+    ══════════════════════════════════════════════ */
+    .stats-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    /* Grid Row — Horizontal · Fill · Gap:12px */
+    .grid-row {
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+      width: 100%;
+    }
+
+    /* ══════════════════════════════════════════════
+       CARD/STAT COMPONENT (figma.md §2.7)
+       Fill Container × 100px · Corner:12px
+       Padding:16px · Gap:4px · shadow/card
+    ══════════════════════════════════════════════ */
+    .stat-card {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      height: 110px;
+      padding: 16px;
+      gap: 6px;
+      border-radius: 12px;
+      background: var(--neutral-surface);
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+    }
+    .stat-card:active {
+      transform: translateY(0px);
+    }
+
+    /* Ripple effect on tap */
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(105,108,255,0.06);
+      border-radius: 12px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .stat-card:active::after { opacity: 1; }
+
+    /* IconContainer — 40×40 · Corner:10px · Fill:#e7e7ff */
+    .stat-icon-container {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .stat-icon-container .material-symbols-rounded {
+      font-size: 22px;
+      font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+    }
+
+    /* Value — Display/Large · 24px · Bold · #333333 */
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-heading);
+      line-height: 32px;
+    }
+
+    /* Label — Label/Large · 12px · SemiBold · #8592a3 */
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      line-height: 16px;
+    }
+
+    /* Color variants for icon containers */
+    .ic-purple { background: #e7e7ff; }
+    .ic-purple .material-symbols-rounded { color: #696cff; }
+
+    .ic-green  { background: #e8f8ee; }
+    .ic-green  .material-symbols-rounded { color: #28c76f; }
+
+    .ic-blue   { background: #e0f9fc; }
+    .ic-blue   .material-symbols-rounded { color: #00cfe8; }
+
+    .ic-orange { background: #fff3e5; }
+    .ic-orange .material-symbols-rounded { color: #ff9f43; }
+
+    .ic-red    { background: #fce8e8; }
+    .ic-red    .material-symbols-rounded { color: #ea5455; }
+
+    .ic-indigo { background: #ece9ff; }
+    .ic-indigo .material-symbols-rounded { color: #7367f0; }
+
+    /* ══════════════════════════════════════════════
+       SHIMMER STATE (Loading skeleton)
+       Active on page load for 1.5s
+    ══════════════════════════════════════════════ */
+    .shimmer-card {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      height: 110px;
+      padding: 16px;
+      gap: 10px;
+      border-radius: 12px;
+      background: var(--neutral-surface);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+    .shimmer-block {
+      border-radius: 6px;
+      background: linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite linear;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .shimmer-icon  { width: 40px; height: 40px; border-radius: 10px; }
+    .shimmer-value { width: 50px; height: 28px; }
+    .shimmer-label { width: 70px; height: 14px; }
+
+    /* Show/hide shimmer vs real cards */
+    .shimmer-grid { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+    .shimmer-row  { display: flex; flex-direction: row; gap: 12px; width: 100%; }
+    .hidden { display: none !important; }
+
+    /* ══════════════════════════════════════════════
+       BOTTOM NAV BAR (Nav/BottomBar)
+       figma.md §2.4
+       Absolute · Bottom:0 · Height:64 · Fill:#fff
+       shadow/bottomNav
+    ══════════════════════════════════════════════ */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 390px;
+      height: 64px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      background: var(--neutral-surface);
+      box-shadow: var(--shadow-bottomnav);
+      z-index: 15;
+    }
+
+    /* Nav/BottomItem — Fill Container · Vertical · Center */
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 0 4px;
+      gap: 2px;
+      cursor: pointer;
+      height: 64px;
+    }
+
+    /* Icon Container — pill for active indicator */
+    .nav-icon-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 16px;
+      border-radius: 999px;
+      transition: background 0.2s;
+    }
+    .nav-item.active .nav-icon-container {
+      background: var(--primary-light);
+    }
+    .nav-icon-container .material-symbols-rounded {
+      font-size: 24px;
+      color: var(--text-secondary);
+      font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+      transition: color 0.2s;
+    }
+    .nav-item.active .nav-icon-container .material-symbols-rounded {
+      color: var(--primary-main);
+      font-variation-settings: 'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;
+    }
+
+    /* Nav Label — Label/Small · 11px */
+    .nav-label {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 14px;
+      transition: color 0.2s;
+    }
+    .nav-item.active .nav-label {
+      color: var(--primary-main);
+      font-weight: 600;
+    }
+
+    /* ══════════════════════════════════════════════
+       NOTIFICATION BADGE on bell icon
+    ══════════════════════════════════════════════ */
+    .notif-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .notif-badge {
+      position: absolute;
+      top: 0; right: 0;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--status-danger);
+      border: 1.5px solid #ffffff;
+    }
+
+    /* ══════════════════════════════════════════════
+       GREETING clock helper — dynamic
+    ══════════════════════════════════════════════ */
+
+    /* ══════════════════════════════════════════════
+       PREVIEW LABELS
+    ══════════════════════════════════════════════ */
+    .preview-label {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a2e;
+      color: #ffffff;
+      font-family: 'Public Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      opacity: 0.85;
+      white-space: nowrap;
+      z-index: 999;
+    }
+    .preview-note {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a2e;
+      color: #a3a4cc;
+      font-family: 'Public Sans', sans-serif;
+      font-size: 11px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      opacity: 0.7;
+      white-space: nowrap;
+      z-index: 999;
+    }
+
+    /* ══════════════════════════════════════════════
+       NAV TAB RIPPLE
+    ══════════════════════════════════════════════ */
+    .nav-item:active .nav-icon-container {
+      background: var(--primary-light);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="preview-label">03_Dashboard · 390×844px · Sneat Theme · ABC Project</div>
+  <div class="preview-note">Frame: 03_Dashboard · Public Sans · Material Symbols Rounded · Figma Spec V1.0</div>
+
+  <!-- ══════════════════════════════════════════════
+       PHONE SHELL — 390×844 Figma Frame
+  ══════════════════════════════════════════════ -->
+  <div class="phone-shell">
+
+    <!-- STATUS BAR — Absolute · Transparent · 44px -->
+    <div class="status-bar">
+      <span class="sb-time" id="clockTime">9:41</span>
+      <div class="sb-icons">
+        <span class="material-symbols-rounded">signal_cellular_alt</span>
+        <span class="material-symbols-rounded">wifi</span>
+        <span class="material-symbols-rounded">battery_5_bar</span>
+      </div>
+    </div>
+
+    <!-- TOP APP BAR — Absolute · Top:44 · Height:56
+         Horizontal · Padding:0 16px · Gap:8px
+         Fill:#ffffff · shadow/topBar -->
+    <div class="top-app-bar">
+      <!-- MenuIcon — menu · 24×24 · #566a7f -->
+      <div class="icon-btn">
+        <span class="material-symbols-rounded">menu</span>
+      </div>
+
+      <!-- TitleBlock — Fill Container · Vertical · Gap:1px -->
+      <div class="title-block">
+        <span class="bar-title">ABC Dashboard</span>
+        <span class="bar-subtitle">Goal Foundation</span>
+      </div>
+
+      <!-- Notification Icon with badge -->
+      <div class="icon-btn notif-wrapper">
+        <span class="material-symbols-rounded"
+          style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;">
+          notifications
+        </span>
+        <span class="notif-badge"></span>
+      </div>
+
+      <!-- AvatarCircle — 36×36 · Corner:999px · #e7e7ff -->
+      <div class="avatar-circle">
+        <span class="avatar-initial">A</span>
+      </div>
+    </div>
+
+    <!-- SCROLL CONTENT — Top:100 · Bottom:64
+         Vertical · Padding:16px · Gap:16px -->
+    <div class="scroll-content" id="scrollContent">
+
+      <!-- ════════════════════════════════════════
+           HERO CARD
+           Corner:16 · Padding:20 · Gap:12
+           Gradient: 90° #696cff → #9c9eff
+      ════════════════════════════════════════ -->
+      <div class="hero-card">
+        <!-- Greeting — Headline/Medium · #ffffff -->
+        <div class="hero-greeting" id="heroGreeting">🐾&nbsp; Good morning, Admin!</div>
+        <!-- GreetingSubtitle — Body/Medium · rgba(255,255,255,0.8) -->
+        <div class="hero-subtitle">Here's your daily overview</div>
+        <!-- Quick stats row inside hero -->
+        <div class="hero-stats-row">
+          <div class="hero-stat">
+            <span class="hero-stat-value">73</span>
+            <span class="hero-stat-label">Total Records</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-value">6</span>
+            <span class="hero-stat-label">Modules</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-value">100%</span>
+            <span class="hero-stat-label">Uptime</span>
+          </div>
+        </div>
+        <!-- ProgressBarPlaceholder — 6px · Corner:999px · white 25% bg -->
+        <div class="progress-bar-wrapper">
+          <div class="progress-bar-fill" id="heroProg"></div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           SHIMMER SKELETON (visible during load)
+      ════════════════════════════════════════ -->
+      <div class="shimmer-grid" id="shimmerGrid">
+        <div class="section-label" style="background:linear-gradient(90deg,#f0f0f0,#e0e0e0,#f0f0f0);background-size:200% 100%;animation:shimmer 1.4s infinite linear;height:14px;width:140px;border-radius:4px;"></div>
+        <div class="shimmer-row">
+          <div class="shimmer-card"><div class="shimmer-block shimmer-icon"></div><div class="shimmer-block shimmer-value"></div><div class="shimmer-block shimmer-label"></div></div>
+          <div class="shimmer-card"><div class="shimmer-block shimmer-icon"></div><div class="shimmer-block shimmer-value"></div><div class="shimmer-block shimmer-label"></div></div>
+        </div>
+        <div class="shimmer-row">
+          <div class="shimmer-card"><div class="shimmer-block shimmer-icon"></div><div class="shimmer-block shimmer-value"></div><div class="shimmer-block shimmer-label"></div></div>
+          <div class="shimmer-card"><div class="shimmer-block shimmer-icon"></div><div class="shimmer-block shimmer-value"></div><div class="shimmer-block shimmer-label"></div></div>
+        </div>
+        <div class="shimmer-row">
+          <div class="shimmer-card"><div class="shimmer-block shimmer-icon"></div><div class="shimmer-block shimmer-value"></div><div class="shimmer-block shimmer-label"></div></div>
+          <div class="shimmer-card"><div class="shimmer-block shimmer-icon"></div><div class="shimmer-block shimmer-value"></div><div class="shimmer-block shimmer-label"></div></div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           REAL STATS GRID (shown after shimmer)
+           Vertical · Gap:12px
+      ════════════════════════════════════════ -->
+      <div id="realGrid" class="hidden">
+
+        <!-- SectionLabel — Label/Large · 12px · SemiBold · #697a8d -->
+        <div class="section-label">Master Data Overview</div>
+
+        <!-- StatsGrid — Vertical · Gap:12px -->
+        <div class="stats-grid">
+
+          <!-- GridRow1 — Cities + NGOs -->
+          <div class="grid-row">
+            <!-- Card/Stat — Cities · icon: location_city -->
+            <div class="stat-card" onclick="navTo('Cities')">
+              <div class="stat-icon-container ic-purple">
+                <span class="material-symbols-rounded">location_city</span>
+              </div>
+              <div class="stat-value" id="val-cities">12</div>
+              <div class="stat-label">Cities</div>
+            </div>
+            <!-- Card/Stat — NGOs · icon: handshake -->
+            <div class="stat-card" onclick="navTo('NGOs')">
+              <div class="stat-icon-container ic-green">
+                <span class="material-symbols-rounded">handshake</span>
+              </div>
+              <div class="stat-value" id="val-ngos">09</div>
+              <div class="stat-label">NGOs</div>
+            </div>
+          </div>
+
+          <!-- GridRow2 — Hospitals + Doctors -->
+          <div class="grid-row">
+            <!-- Card/Stat — Hospitals · icon: local_hospital -->
+            <div class="stat-card" onclick="navTo('Hospitals')">
+              <div class="stat-icon-container ic-red">
+                <span class="material-symbols-rounded">local_hospital</span>
+              </div>
+              <div class="stat-value" id="val-hospitals">08</div>
+              <div class="stat-label">Hospitals</div>
+            </div>
+            <!-- Card/Stat — Doctors · icon: medical_services -->
+            <div class="stat-card" onclick="navTo('Doctors')">
+              <div class="stat-icon-container ic-blue">
+                <span class="material-symbols-rounded">medical_services</span>
+              </div>
+              <div class="stat-value" id="val-doctors">26</div>
+              <div class="stat-label">Doctors</div>
+            </div>
+          </div>
+
+          <!-- GridRow3 — Vehicles + Staff -->
+          <div class="grid-row">
+            <!-- Card/Stat — Vehicles · icon: airport_shuttle -->
+            <div class="stat-card" onclick="navTo('Vehicles')">
+              <div class="stat-icon-container ic-orange">
+                <span class="material-symbols-rounded">airport_shuttle</span>
+              </div>
+              <div class="stat-value" id="val-vehicles">17</div>
+              <div class="stat-label">Vehicles</div>
+            </div>
+            <!-- Card/Stat — Staff · icon: group -->
+            <div class="stat-card" onclick="navTo('Staff')">
+              <div class="stat-icon-container ic-indigo">
+                <span class="material-symbols-rounded">group</span>
+              </div>
+              <div class="stat-value" id="val-staff">39</div>
+              <div class="stat-label">Staff</div>
+            </div>
+          </div>
+
+        </div><!-- /stats-grid -->
+      </div><!-- /realGrid -->
+
+    </div><!-- /scroll-content -->
+
+    <!-- ══════════════════════════════════════════
+         BOTTOM NAVIGATION BAR (Nav/BottomBar)
+         Absolute · Bottom:0 · Height:64
+         Fill:#ffffff · shadow/bottomNav
+         Active Tab: Tab 1 (Home)
+    ══════════════════════════════════════════ -->
+    <div class="bottom-nav">
+      <!-- Tab 1 — Home (ACTIVE) -->
+      <div class="nav-item active" onclick="setTab(this, 0)">
+        <div class="nav-icon-container">
+          <span class="material-symbols-rounded">home</span>
+        </div>
+        <span class="nav-label">Home</span>
+      </div>
+      <!-- Tab 2 — Cities -->
+      <div class="nav-item" onclick="setTab(this, 1)">
+        <div class="nav-icon-container">
+          <span class="material-symbols-rounded">location_city</span>
+        </div>
+        <span class="nav-label">Cities</span>
+      </div>
+      <!-- Tab 3 — Hospitals -->
+      <div class="nav-item" onclick="setTab(this, 2)">
+        <div class="nav-icon-container">
+          <span class="material-symbols-rounded">local_hospital</span>
+        </div>
+        <span class="nav-label">Hospitals</span>
+      </div>
+      <!-- Tab 4 — More -->
+      <div class="nav-item" onclick="setTab(this, 3)">
+        <div class="nav-icon-container">
+          <span class="material-symbols-rounded">more_horiz</span>
+        </div>
+        <span class="nav-label">More</span>
+      </div>
+    </div>
+
+  </div><!-- /phone-shell -->
+
+  <script>
+    // ── Live clock in status bar
+    function updateClock() {
+      const now = new Date();
+      let h = now.getHours(), m = now.getMinutes();
+      document.getElementById('clockTime').textContent =
+        String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+    }
+    updateClock();
+    setInterval(updateClock, 30000);
+
+    // ── Dynamic greeting based on time of day
+    function setGreeting() {
+      const h = new Date().getHours();
+      let g = h < 12 ? '🌅  Good morning, Admin!'
+            : h < 17 ? '☀️  Good afternoon, Admin!'
+            :           '🌙  Good evening, Admin!';
+      document.getElementById('heroGreeting').innerHTML = g;
+    }
+    setGreeting();
+
+    // ── Progress bar animate on load
+    setTimeout(() => {
+      document.getElementById('heroProg').style.width = '72%';
+    }, 600);
+
+    // ── Shimmer → Real cards transition (simulates API load)
+    setTimeout(() => {
+      document.getElementById('shimmerGrid').classList.add('hidden');
+      const real = document.getElementById('realGrid');
+      real.classList.remove('hidden');
+      // Count-up animation for stat values
+      countUp('val-cities',   0, 12, 800);
+      countUp('val-ngos',     0, 9,  900);
+      countUp('val-hospitals',0, 8,  700);
+      countUp('val-doctors',  0, 26, 1000);
+      countUp('val-vehicles', 0, 17, 850);
+      countUp('val-staff',    0, 39, 1100);
+    }, 1500);
+
+    // ── Count-up animation for stat values
+    function countUp(id, from, to, duration) {
+      const el = document.getElementById(id);
+      const step = (to - from) / (duration / 16);
+      let current = from;
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= to) {
+          current = to;
+          clearInterval(timer);
+        }
+        el.textContent = String(Math.round(current)).padStart(2, '0');
+      }, 16);
+    }
+
+    // ── Bottom nav tab switch
+    function setTab(el, idx) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // ── Stat card tap — show snackbar
+    function navTo(name) {
+      showSnack('Navigate to ' + name + ' list →');
+    }
+
+    // ── Inline snackbar (reuse from login)
+    function showSnack(msg) {
+      let sb = document.getElementById('snackbar');
+      if (!sb) {
+        sb = document.createElement('div');
+        sb.id = 'snackbar';
+        sb.style.cssText = 'position:absolute;bottom:80px;left:16px;right:16px;padding:12px 16px;border-radius:8px;background:#333;display:flex;align-items:center;gap:8px;transition:transform .3s ease,opacity .3s ease;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,.3);transform:translateY(80px);opacity:0;';
+        const t = document.createElement('span');
+        t.id = 'snackbarText';
+        t.style.cssText = 'font-family:Public Sans,sans-serif;font-size:13px;color:#fff;flex:1;line-height:18px;';
+        sb.appendChild(t);
+        document.querySelector('.phone-shell').appendChild(sb);
+      }
+      document.getElementById('snackbarText').textContent = msg;
+      sb.style.transform = 'translateY(0)';
+      sb.style.opacity   = '1';
+      clearTimeout(sb._timer);
+      sb._timer = setTimeout(() => {
+        sb.style.transform = 'translateY(80px)';
+        sb.style.opacity   = '0';
+      }, 2500);
+    }
+  </script>
+
+</body>
+</html>
