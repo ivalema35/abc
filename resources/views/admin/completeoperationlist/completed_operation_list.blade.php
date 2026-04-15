@@ -191,9 +191,9 @@
                       <label class="form-label">Select Project</label>
                       <select class="form-select" id="projectSelect">
                         <option value="">---Select Project---</option>
-                        <option value="Rajkot Municipal Corporation">Rajkot Municipal Corporation</option>
-                        <option value="IIT Gandhinagar">IIT Gandhinagar</option>
-                        <option value="Tata Chemicals Mithapur">Tata Chemicals Mithapur</option>
+                        @foreach ($projects as $project)
+                          <option value="{{ $project->id }}">{{ $project->name }}</option>
+                        @endforeach
                       </select>
                     </div>
 
@@ -201,39 +201,40 @@
                       <label class="form-label">Select Hospital</label>
                       <select class="form-select" id="hospitalSelect">
                         <option value="">---Select Hospital---</option>
-                        <option value="Madhapar Hospital">Madhapar Hospital</option>
-                        <option value="IIT Gandhinagar">IIT Gandhinagar</option>
-                        <option value="Tata Chemicals Mithapur Dwarka">Tata Chemicals Mithapur Dwarka</option>
+                        @foreach ($hospitals as $hospital)
+                          <option value="{{ $hospital->id }}">{{ $hospital->name }}</option>
+                        @endforeach
                       </select>
                     </div>
+                  </div>
+
+                  <div class="d-flex justify-content-end mt-3">
+                    <a href="{{ route('export.completed_operation_list') }}" class="btn btn-success" id="btn-export-excel-completed" data-base-url="{{ route('export.completed_operation_list') }}">
+                      <i class="fas fa-file-excel"></i> Export to Excel
+                    </a>
                   </div>
 
                   <div class="card catch-data-card mt-4 mb-0">
                     <h6 class="card-header mb-0">Related Catch Data</h6>
                     <div class="card-body p-3">
                       <div class="table-responsive catch-data-table-wrap table-anim-wrap">
-                        <table class="table table-striped catch-data-table">
+                        <table id="completed-operation-table" class="table table-striped catch-data-table">
                           <thead>
                             <tr>
                               <th>ID</th>
                               <th>Project</th>
                               <th>Hospital</th>
-                              <th>Vehicle</th>
-                              <th>Image</th>
                               <th>Tag</th>
-                              <th>Address</th>
                               <th>Dog Type</th>
-                              <th>Date</th>
-                              <th>Actions</th>
+                              <th>Gender</th>
+                              <th>Status</th>
+                              <th>Catch Date</th>
+                              <th>Surgery Date</th>
+                              <th>Doctor</th>
+                              <th>Remarks</th>
                             </tr>
                           </thead>
-                          <tbody id="catchTableBody">
-                            <tr>
-                              <td colspan="10" class="text-center text-muted py-4">
-                                Select Project / Hospital to view related data
-                              </td>
-                            </tr>
-                          </tbody>
+                          <tbody></tbody>
                         </table>
                       </div>
                     </div>
@@ -246,111 +247,61 @@
 @endsection
 @push('scripts')
 <script>
-      const catchData = [
-        {
-          Id: "1",
-          project: "Rajkot Municipal Corporation",
-          hospital: "Madhapar Hospital",
-          Vehicle: "GJ 01 KT 6006",
-          Image: "dog1.jpg",
-          Tag:"35",
-          Address: "null,kotharia Gujarat -360022 India",
-          DogType: "street",
-          date: "0000-00-00 00:00:00",
-          Action:"View Details"
-        },
-        {
-          Id: "2",
-          project: "Rajkot Municipal Corporation",
-          hospital: "Madhapar Hospital",
-          Vehicle: "GJ 01 KT 6007",
-          Image: "dog2.jpg",  
-          Tag:"286",
-          Address: "mota mava,Rajkot Gujarat -360005 India",
-          DogType: "Large",
-          date: "2026-03-06  07:33:52",
-          Action:"View Details"
-        }
-      ];
+      $(function () {
+        var projectSelect = document.getElementById('projectSelect');
+        var hospitalSelect = document.getElementById('hospitalSelect');
 
-      const projectSelect = document.getElementById("projectSelect");
-      const hospitalSelect = document.getElementById("hospitalSelect");
-      const catchTableBody = document.getElementById("catchTableBody");
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        function updateCompletedExportLink() {
+          var exportLink = document.getElementById('btn-export-excel-completed');
+          var exportUrl = new URL(exportLink.dataset.baseUrl, window.location.origin);
 
-      function animateTableRows() {
-        if (prefersReducedMotion) {
-          return;
+          if (projectSelect.value) {
+            exportUrl.searchParams.set('project_id', projectSelect.value);
+          }
+
+          if (hospitalSelect.value) {
+            exportUrl.searchParams.set('hospital_id', hospitalSelect.value);
+          }
+
+          exportLink.href = exportUrl.toString();
         }
 
-        const rows = catchTableBody.querySelectorAll("tr");
-        rows.forEach(function (row, index) {
-          row.classList.remove("row-animate");
-          row.style.animationDelay = index * 70 + "ms";
-
-          // Restart animation when filters change repeatedly.
-          void row.offsetWidth;
-          row.classList.add("row-animate");
-        });
-      }
-
-      function updateTable(html) {
-        catchTableBody.innerHTML = html;
-        animateTableRows();
-      }
-
-      function renderCatchRows() {
-        const selectedProject = projectSelect.value;
-        const selectedHospital = hospitalSelect.value;
-
-        const filteredData = catchData.filter(function (item) {
-          const projectMatch = !selectedProject || item.project === selectedProject;
-          const hospitalMatch = !selectedHospital || item.hospital === selectedHospital;
-          return projectMatch && hospitalMatch;
+        var completedOperationTable = $('#completed-operation-table').DataTable({
+          processing: true,
+          serverSide: true,
+          responsive: true,
+          autoWidth: false,
+          ajax: {
+            url: '{{ route('completed-operation-list') }}',
+            data: function (d) {
+              d.project_id = projectSelect.value;
+              d.hospital_id = hospitalSelect.value;
+            }
+          },
+          columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'project_name', name: 'project_name' },
+            { data: 'hospital_name', name: 'hospital_name' },
+            { data: 'tag_no', name: 'catching_records.tag_no' },
+            { data: 'dog_type', name: 'catching_records.dog_type' },
+            { data: 'gender', name: 'catching_records.gender' },
+            { data: 'status', name: 'catching_records.status' },
+            { data: 'catch_date_formatted', name: 'catching_records.catch_date' },
+            { data: 'operation_date', name: 'dog_operations.operation_date' },
+            { data: 'doctor_name', name: 'doctor_name' },
+            { data: 'remarks', name: 'remarks', orderable: false, searchable: false }
+          ]
         });
 
-        if (!selectedProject && !selectedHospital) {
-          updateTable(
-            '<tr><td colspan="10" class="text-center text-muted py-4">Select Project / Hospital to view related data</td></tr>'
-          );
-          return;
+        function reloadCompletedTable() {
+          completedOperationTable.ajax.reload(null, false);
+          updateCompletedExportLink();
         }
 
-        if (filteredData.length === 0) {
-          updateTable(
-            '<tr><td colspan="10" class="text-center text-warning py-4">No related data found for selected option</td></tr>'
-          );
-          return;
-        }
+        projectSelect.addEventListener('change', reloadCompletedTable);
+        hospitalSelect.addEventListener('change', reloadCompletedTable);
 
-        updateTable(
-          filteredData
-            .map(function (item) {
-              const viewButton =
-                '<a href="{{ route("complete-list") }}" class="action-view-btn" title="View information" aria-label="View information for operation ' +
-                item.Id +
-                '"><i class="bx bx-show"></i></a>';
-
-              return (
-                "<tr>" +
-                "<td>" + item.Id + "</td>" +
-                "<td>" + item.project + "</td>" +
-                "<td>" + item.hospital + "</td>" +
-                "<td>" + item.Vehicle + "</td>" +
-                "<td>" + item.Image + "</td>" +
-                "<td>" + item.Tag + "</td>" +
-                "<td>" + item.Address + "</td>" +
-                "<td>" + item.DogType + "</td>" +
-                "<td>" + item.date + "</td>" +
-                "<td>" + viewButton + "</td>" +
-                "</tr>"
-              );
-            })
-            .join("")
-        );
-      }
-
-      projectSelect.addEventListener("change", renderCatchRows);
-      hospitalSelect.addEventListener("change", renderCatchRows);
+        updateCompletedExportLink();
+      });
     </script>
 @endpush

@@ -58,9 +58,8 @@ Route::middleware('auth')->group(function () {
     })->name('view-catch');
 
     // completedoperationlist routes
-    Route::get('/completed-operation-list', function () {
-        return view('admin.completeoperationlist.completed_operation_list');
-    })->name('completed-operation-list');
+    Route::get('/completed-operation-list', [ReportController::class, 'completedOperationList'])->name('completed-operation-list');
+    Route::get('/reports/completed-operation-list/export', [ReportController::class, 'exportCompletedOperationList'])->name('export.completed_operation_list');
 
     Route::get('/complete-list', function () {
         return view('admin.completeoperationlist.complete_list');
@@ -171,6 +170,7 @@ Route::middleware('auth')->group(function () {
 
     // projectsummary routes
     Route::get('/project-summary', [ReportController::class, 'projectSummary'])->name('project-summary');
+    Route::get('/reports/project-summary/export', [ReportController::class, 'exportProjectSummary'])->name('export.project_summary');
 
     // recevidoglist routes
     Route::get('/manage-received-dog-list', function () {

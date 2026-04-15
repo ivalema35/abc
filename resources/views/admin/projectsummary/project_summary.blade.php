@@ -470,6 +470,12 @@
             </div>
             <!--/ Cards with unicons & charts -->
 
+            <div class="d-flex justify-content-end mt-4">
+              <a href="{{ route('export.project_summary') }}" class="btn btn-success" id="btn-export-excel-project-summary" data-base-url="{{ route('export.project_summary') }}">
+                <i class="fas fa-file-excel"></i> Export to Excel
+              </a>
+            </div>
+
             <div class="card catch-animated-card mt-4">
               <div class="card-header bg-dark text-white">
                 <h5 class="mb-0 text-white">Project Summary Report</h5>
@@ -497,6 +503,18 @@
 @push('scripts')
 <script>
   $(function () {
+    function updateProjectSummaryExportLink() {
+      var exportLink = document.getElementById('btn-export-excel-project-summary');
+      var exportUrl = new URL(exportLink.dataset.baseUrl, window.location.origin);
+      var currentParams = new URLSearchParams(window.location.search);
+
+      currentParams.forEach(function (value, key) {
+        exportUrl.searchParams.set(key, value);
+      });
+
+      exportLink.href = exportUrl.toString();
+    }
+
     $('#project-summary-table').DataTable({
       processing: true,
       serverSide: true,
@@ -514,6 +532,8 @@
         { data: 'expired_count', name: 'expired_count' }
       ]
     });
+
+    updateProjectSummaryExportLink();
   });
 </script>
 @endpush

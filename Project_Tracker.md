@@ -51,15 +51,13 @@
 * [x] **Phase 3.3: Post-Operative Care (Observation)** (Minimal Approach, Timeline Audit Logs `dog_stage_logs`, DataTables AJAX, SweetAlert2 Transitions).
 * [x] Phase 3.4: R4R (Ready for Release) & Completed Records (End-to-end Lifecycle finished).
 * [x] **Phase 4.1: Dashboard Real-Time Wiring** (Live Counters & ApexCharts lifecycle integration).
+* [x] **Phase 4.2: Reports Module** (Daily Running Sheet, Project Summary, Completed List with Maatwebsite Excel Exports).
 
 ### 🔄 Active Task
-* [ ] **Phase 4.2: Reports Module**
-  - Audit existing reports UI (Daily Running Sheet, Performance Reports).
-  - Implement ReportController with filtering logic.
-  - Add Excel/PDF export features (Maatwebsite/Excel integration).
+* [ ] **Phase 4.3: Final UI Polish & Project Handover**
 
 ### Pending Modules (Queue)
-* [ ] Phase 4.3: Final UI Polish & Project Handover.
+
       
 ### Notes & Changes from Plan
 * Replaced fragmented Dropzone setups with a single master script in `layout.blade.php`.

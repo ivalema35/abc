@@ -836,7 +836,7 @@
                 <div class="text-truncate" data-i18n="Today's Catch List">Today's Catch List</div>
               </a>
             </li>
-            <li class="menu-item">
+            <li class="menu-item {{ request()->is('completed-operation-list') || request()->is('complete-list') || request()->is('view-completed-operation') ? 'active' : '' }}">
               <a href="{{ route('completed-operation-list') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-check-circle"></i>
                 <div class="text-truncate" data-i18n="Completed Operations List">Completed Operations List</div>
@@ -974,7 +974,7 @@
                 <div class="text-truncate" data-i18n="Catching Records">Catching Records</div>
               </a>
             </li>
-            <li class="menu-item">
+            <li class="menu-item {{ request()->is('manage-catch-process') || request()->is('manage-process-dog-list') || request()->is('manage-observation-dog-list') || request()->is('manage-r4r-dog-list') || request()->is('project-summary') || request()->is('daily-running-sheet') || request()->is('manage-completed-operation-dog-list') ? 'active' : '' }}">
               <a href="{{ route('manage-catch-process') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-loader-circle"></i>
                 <div class="text-truncate" data-i18n="Catch Process">Catch Process</div>

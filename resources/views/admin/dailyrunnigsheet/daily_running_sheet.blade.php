@@ -257,7 +257,7 @@
                       <div class="col-12 col-md-4 d-flex gap-2 flex-wrap">
                         <button type="button" id="search-btn" class="btn btn-dark flex-fill">Search</button>
                         <button type="button" id="reset-btn" class="btn btn-outline-secondary flex-fill">Reset</button>
-                        <a href="{{ route('export.daily_running_sheet') }}" class="btn btn-success flex-fill" id="btn-export-excel">
+                        <a href="{{ route('export.daily_running_sheet') }}" class="btn btn-success flex-fill" id="btn-export-excel" data-base-url="{{ route('export.daily_running_sheet') }}">
                           <i class="fas fa-file-excel"></i> Export to Excel
                         </a>
                       </div>
@@ -387,11 +387,28 @@
           reloadDailyTable();
         });
 
+        function updateExportLink() {
+          var exportLink = document.getElementById('btn-export-excel');
+          var exportUrl = new URL(exportLink.dataset.baseUrl, window.location.origin);
+
+          if (projectSearch.value) {
+            exportUrl.searchParams.set('project_id', projectSearch.value);
+          }
+
+          if (runningDate.value) {
+            exportUrl.searchParams.set('running_date', runningDate.value);
+          }
+
+          exportLink.href = exportUrl.toString();
+        }
+
         projectSearch.addEventListener('change', function () {
+          updateExportLink();
           reloadDailyTable();
         });
 
         runningDate.addEventListener('change', function () {
+          updateExportLink();
           reloadDailyTable();
         });
 
@@ -401,7 +418,10 @@
           summarySection.classList.add('d-none');
           resultsSection.classList.add('d-none');
           dailyRunningTable.ajax.reload(null, false);
+          updateExportLink();
         });
+
+        updateExportLink();
       });
     </script>
 
