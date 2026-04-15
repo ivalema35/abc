@@ -311,39 +311,37 @@
                           <tbody>
                             <tr>
                               <td class="lbl">Tag Number</td>
-                              <td class="val">277</td>
+                              <td class="val">{{ $record->tag_no ?? '-' }}</td>
                               <td class="lbl">Gender</td>
-                              <td class="val">male</td>
+                              <td class="val">{{ $record->gender ?? '-' }}</td>
                               <td class="lbl">Dog Type</td>
-                              <td class="val">street</td>
+                              <td class="val">{{ $record->dog_type ?? '-' }}</td>
                             </tr>
                             <tr>
                               <td class="lbl">Project Name</td>
-                              <td class="val" colspan="5">Rajkot Municipal Corporation</td>
+                              <td class="val" colspan="5">{{ $record->project->project_name ?? '-' }}</td>
                             </tr>
                             <tr>
                               <td class="lbl">Location</td>
-                              <td class="val" colspan="5">Maruti Nagar, Rajkot Gujarat â€“ 360001 India</td>
+                              <td class="val" colspan="5">{{ $record->address ?? '-' }}</td>
                             </tr>
                             <tr>
-                              <td class="lbl">Owner Name</td>
-                              <td class="val">&nbsp;</td>
-                              <td class="lbl">Age</td>
-                              <td class="val">&nbsp;</td>
-                              <td class="lbl">Age Status</td>
-                              <td class="val">adult</td>
+                              <td class="lbl">Hospital</td>
+                              <td class="val">{{ $record->hospital->name ?? '-' }}</td>
+                              <td class="lbl">Doctor</td>
+                              <td class="val" colspan="3">{{ $record->operation->doctor->name ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                               <td class="lbl">Color</td>
-                              <td class="val">Brown White</td>
+                              <td class="val">{{ $record->dog_color ?? '-' }}</td>
                               <td class="lbl">Temp</td>
-                              <td class="val">100</td>
+                              <td class="val">{{ $record->operation->temperature ?? '-' }}</td>
                               <td class="lbl">Weight</td>
-                              <td class="val">22</td>
+                              <td class="val">{{ $record->operation->body_weight ?? '-' }}</td>
                             </tr>
                             <tr>
-                              <td class="lbl">Treatment</td>
-                              <td class="val" colspan="5">&nbsp;</td>
+                              <td class="lbl">Age Status</td>
+                              <td class="val" colspan="5">{{ $record->age_status ?? '-' }}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -366,42 +364,16 @@
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td class="sub-lbl">Aetropine</td>
-                              <td>1.1</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">Xylazine</td>
-                              <td>1</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">Propofol</td>
-                              <td>4.4</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">meloxicam</td>
-                              <td>0.88</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">bcomplex</td>
-                              <td>0.88</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">Benecillin</td>
-                              <td>2.2</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">Ivermectin</td>
-                              <td>0.66</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">Vitamin</td>
-                              <td>0.66</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">Enrofloxacin</td>
-                              <td>1.1</td>
-                            </tr>
+                            @forelse ($record->operation->medicines ?? [] as $med)
+                              <tr>
+                                <td class="sub-lbl">{{ $med->name }}</td>
+                                <td>{{ $med->pivot->qty ?? '-' }}</td>
+                              </tr>
+                            @empty
+                              <tr>
+                                <td colspan="2" class="text-center text-muted">No medicines prescribed</td>
+                              </tr>
+                            @endforelse
                           </tbody>
                         </table>
                       </div>
@@ -416,51 +388,21 @@
                             <tr>
                               <th>Event Name</th>
                               <th>Date &amp; Time</th>
-                              <th>Doctor Name</th>
+                              <th>User Name</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td class="sub-lbl">Catched On</td>
-                              <td class="date-cell" colspan="2">
-                                <i class="bx bx-calendar date-icon"></i>2026-03-11 17:53:44
-                              </td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">Received On</td>
-                              <td class="date-cell"><i class="bx bx-calendar date-icon"></i>2026-03-11 18:34:52</td>
-                              <td>Dr. Raisuddin Badi</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">Operation On</td>
-                              <td class="date-cell"><i class="bx bx-calendar date-icon"></i>2026-03-12 13:17:32</td>
-                              <td>Dr. Kishan Kathiriya</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">Observation On</td>
-                              <td class="date-cell"><i class="bx bx-calendar date-icon"></i>2026-03-12 13:21:08</td>
-                              <td>Dr. Kishan Kathiriya</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">R4R Marking On</td>
-                              <td class="date-cell"><i class="bx bx-calendar date-icon"></i>0000-00-00 00:00:00</td>
-                              <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">Released On</td>
-                              <td class="date-cell"><i class="bx bx-calendar date-icon"></i>0000-00-00 00:00:00</td>
-                              <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">Rejected On</td>
-                              <td class="date-cell"><i class="bx bx-calendar date-icon"></i>0000-00-00 00:00:00</td>
-                              <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                              <td class="sub-lbl">Expired On</td>
-                              <td class="date-cell"><i class="bx bx-calendar date-icon"></i>0000-00-00 00:00:00</td>
-                              <td>&nbsp;</td>
-                            </tr>
+                            @forelse ($record->stageLogs as $log)
+                              <tr>
+                                <td class="sub-lbl">{{ ucfirst($log->stage) }}</td>
+                                <td class="date-cell"><i class="bx bx-calendar date-icon"></i>{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
+                                <td>{{ $log->actionBy->name ?? 'N/A' }}</td>
+                              </tr>
+                            @empty
+                              <tr>
+                                <td colspan="3" class="text-center text-muted">No stage transitions recorded</td>
+                              </tr>
+                            @endforelse
                           </tbody>
                         </table>
                       </div>
@@ -477,7 +419,7 @@
                           <tbody>
                             <tr>
                               <td class="lbl">Number Plate</td>
-                              <td class="val">GJ17Y1389</td>
+                              <td class="val">{{ $record->vehicle->vehicle_no ?? '-' }}</td>
                             </tr>
                           </tbody>
                         </table>

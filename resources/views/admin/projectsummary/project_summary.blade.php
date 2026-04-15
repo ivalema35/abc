@@ -469,4 +469,51 @@
               </div>
             </div>
             <!--/ Cards with unicons & charts -->
+
+            <div class="card catch-animated-card mt-4">
+              <div class="card-header bg-dark text-white">
+                <h5 class="mb-0 text-white">Project Summary Report</h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table id="project-summary-table" class="table table-striped border-top align-middle">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Project</th>
+                        <th>Total Caught</th>
+                        <th>Operated</th>
+                        <th>Released</th>
+                        <th>Expired</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
 @endsection            
+
+@push('scripts')
+<script>
+  $(function () {
+    $('#project-summary-table').DataTable({
+      processing: true,
+      serverSide: true,
+      responsive: true,
+      autoWidth: false,
+      ajax: {
+        url: '{{ route('project-summary') }}'
+      },
+      columns: [
+        { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+        { data: 'project_name', name: 'project_name' },
+        { data: 'total_caught', name: 'total_caught' },
+        { data: 'operated_count', name: 'operated_count' },
+        { data: 'released_count', name: 'released_count' },
+        { data: 'expired_count', name: 'expired_count' }
+      ]
+    });
+  });
+</script>
+@endpush

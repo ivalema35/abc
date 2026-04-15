@@ -272,7 +272,7 @@
                         <li class="breadcrumb-item">
                           <a href="{{ route('manage-r4r-dog-list') }}">R4R Dog List</a>
                         </li>
-                        <li class="breadcrumb-item active"><a href="{{ route('view-r4r-dog') }}">View R4R Dog</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">View R4R Dog</li>
                       </ol>
                     </nav>
                   </div>

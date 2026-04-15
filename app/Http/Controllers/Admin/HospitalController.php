@@ -136,6 +136,7 @@ class HospitalController extends Controller
 
         if ($request->boolean('quick_add')) {
             return response()->json([
+                'status' => 'success',
                 'success' => true,
                 'message' => 'Hospital added successfully!',
                 'hospital' => [
@@ -146,8 +147,13 @@ class HospitalController extends Controller
         }
 
         return response()->json([
+            'status' => 'success',
             'success' => true,
             'message' => 'Hospital added successfully!',
+            'hospital' => [
+                'id' => $hospital->id,
+                'name' => $hospital->name,
+            ],
             'redirect_url' => route('manage-hospital.index'),
         ]);
     }

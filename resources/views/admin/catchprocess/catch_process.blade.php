@@ -418,7 +418,7 @@
                 
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-4 col-6 mb-6 metric-card">
                   <div class="card metric-click-card h-100">
-                    <a href="{{ route('catched-dog-list') }}" class="text-decoration-none text-body d-block h-100">
+                    <a href="{{ route('catching-records.index') }}" class="text-decoration-none text-body d-block h-100">
                       <div class="card-body">
                         <span class="badge rounded-pill bg-label-dark metric-value-badge">12</span>
                         <div class="avatar metric-icon mb-2 fs-3">

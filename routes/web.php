@@ -4,16 +4,25 @@ use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\ArvStaffController;
 use App\Http\Controllers\Admin\BillMasterController;
 use App\Http\Controllers\Admin\CatchingStaffController;
+use App\Http\Controllers\Admin\CatchingRecordController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DoctorController;
+use App\Http\Controllers\Admin\DogOperationController;
 use App\Http\Controllers\Admin\HospitalController;
+use App\Http\Controllers\Admin\ProcessDogController;
+use App\Http\Controllers\Admin\ObservationController;
+use App\Http\Controllers\Admin\R4rDogController;
 use App\Http\Controllers\Admin\MedicareController;
 use App\Http\Controllers\Admin\MedicineController;
 use App\Http\Controllers\Admin\NgoController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\VehicleController;
+use App\Models\Doctor;
+use App\Models\Medicine;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -62,9 +71,8 @@ Route::middleware('auth')->group(function () {
     })->name('view-completed-operation');
 
     // project routes
-    Route::get('/manage-project', function () {
-        return view('admin.project.manage_project');
-    })->name('manage-project');
+    Route::resource('manage-project', ProjectController::class);
+    Route::post('manage-project/toggle-status', [ProjectController::class, 'toggleStatus'])->name('manage-project.toggle-status');
 
     Route::get('/add-project', function () {
         return view('admin.project.add_project');
@@ -95,22 +103,10 @@ Route::middleware('auth')->group(function () {
         return view('admin.bill.view_bill');
     })->name('view-bill');
 
-    // dogcatchinglist routes
-    Route::get('/manage-dog-catcher', function () {
-        return view('admin.dogcathchinglist.dog_catcher');
-    })->name('manage-dog-catcher');
-
-    Route::get('/add-dog-catcher', function () {
-        return view('admin.dogcathchinglist.add_dog_catcher');
-    })->name('add-dog-catcher');
-
-    Route::get('/catched-dog-list', function () {
-        return view('admin.dogcathchinglist.catched_dog_list');
-    })->name('catched-dog-list');
-
-    Route::get('/view-catching-staff', function () {
-        return view('admin.dogcathchinglist.view_catching_staff');
-    })->name('view-catching-staff');
+    Route::get('catching-records/city-masters', [CatchingRecordController::class, 'cityMasters'])->name('catching-records.city-masters');
+    Route::get('catching-records/project-staff', [CatchingRecordController::class, 'projectStaff'])->name('catching-records.project-staff');
+    Route::resource('catching-records', CatchingRecordController::class);
+    Route::post('dog-operations', [DogOperationController::class, 'store'])->name('dog-operations.store');
 
     // catchprocess routes
     Route::get('/manage-catch-process', function () {
@@ -143,13 +139,10 @@ Route::middleware('auth')->group(function () {
         return view('admin.r4rdoglist.R4R_operation_list');
     })->name('R4R-operation-list');
 
-    Route::get('/manage-r4r-dog-list', function () {
-        return view('admin.r4rdoglist.r4r_dog_list');
-    })->name('manage-r4r-dog-list');
+    Route::get('/manage-r4r-dog-list', [R4rDogController::class, 'index'])->name('manage-r4r-dog-list');
+    Route::post('/r4r/update-status/{id}', [R4rDogController::class, 'updateStatus'])->name('r4r.update-status');
 
-    Route::get('/view-r4r-dog', function () {
-        return view('admin.r4rdoglist.view_r4r_dog');
-    })->name('view-r4r-dog');
+    Route::get('/view-r4r-dog/{id}', [R4rDogController::class, 'show'])->name('view-r4r-dog');
 
     Route::get('/view-r4r-operation-list', function () {
         return view('admin.r4rdoglist.view_r4r_operation_list');
@@ -165,28 +158,19 @@ Route::middleware('auth')->group(function () {
     })->name('view-completed-operation-dog-list');
 
     // daily running sheet routes
-    Route::get('/daily-running-sheet', function () {
-        return view('admin.dailyrunnigsheet.daily_running_sheet');
-    })->name('daily-running-sheet');
+    Route::get('/daily-running-sheet', [ReportController::class, 'dailyRunningSheet'])->name('daily-running-sheet');
+    Route::get('/reports/daily-running-sheet/export', [ReportController::class, 'exportDailyRunningSheet'])->name('export.daily_running_sheet');
 
     // observation dog list routes
-    Route::get('/manage-observation-dog-list', function () {
-        return view('admin.observationdoglist.observation_dog_list');
-    })->name('manage-observation-dog-list');
-
-    Route::get('/view-observation-dog-list', function () {
-        return view('admin.observationdoglist.view_observation_dog');
-    })->name('view-observation-dog-list');
+    Route::get('/manage-observation-dog-list', [ObservationController::class, 'index'])->name('manage-observation-dog-list');
+    Route::get('/view-observation-dog-list/{id}', [ObservationController::class, 'show'])->name('view-observation-dog-list');
+    Route::post('/observation/update-status/{id}', [ObservationController::class, 'updateStatus'])->name('observation.update-status');
 
     // processdoglist routes
-    Route::get('/manage-process-dog-list', function () {
-        return view('admin.processdoglist.process_dog_list');
-    })->name('manage-process-dog-list');
+    Route::get('/manage-process-dog-list', [ProcessDogController::class, 'index'])->name('manage-process-dog-list');
 
     // projectsummary routes
-    Route::get('/project-summary', function () {
-        return view('admin.projectsummary.project_summary');
-    })->name('project-summary');
+    Route::get('/project-summary', [ReportController::class, 'projectSummary'])->name('project-summary');
 
     // recevidoglist routes
     Route::get('/manage-received-dog-list', function () {

@@ -245,18 +245,21 @@
                         <label for="project-search" class="form-label">Search Project</label>
                         <select id="project-search" class="form-select">
                           <option value="">Select Project</option>
-                          <option value="Project A">Project A</option>
-                          <option value="Project B">Project B</option>
-                          <option value="Project C">Project C</option>
+                          @foreach ($projects as $project)
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
+                          @endforeach
                         </select>
                       </div>
                       <div class="col-12 col-md-3">
                         <label for="running-date" class="form-label">Date</label>
-                        <input type="date" id="running-date" class="form-control" />
+                        <input type="text" id="running-date" class="form-control" autocomplete="off" />
                       </div>
-                      <div class="col-12 col-md-4 d-flex gap-2">
-                        <button type="button" id="search-btn" class="btn btn-dark w-100">Search</button>
-                        <button type="button" id="reset-btn" class="btn btn-outline-secondary w-100">Reset</button>
+                      <div class="col-12 col-md-4 d-flex gap-2 flex-wrap">
+                        <button type="button" id="search-btn" class="btn btn-dark flex-fill">Search</button>
+                        <button type="button" id="reset-btn" class="btn btn-outline-secondary flex-fill">Reset</button>
+                        <a href="{{ route('export.daily_running_sheet') }}" class="btn btn-success flex-fill" id="btn-export-excel">
+                          <i class="fas fa-file-excel"></i> Export to Excel
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -307,45 +310,17 @@
                         <thead>
                           <tr>
                             <th>ID</th>
-                            <th>Tag</th>
-                            <th>Gender</th>
+                            <th>Project</th>
+                            <th>Hospital</th>
+                            <th>Tag No</th>
+                            <th>Catch Date</th>
+                            <th>Status</th>
                             <th>Body Weight</th>
-                            <th>Color</th>
-                            <th>Pre MED</th>
-                            <th>Anaesthetic</th>
-                            <th>Other</th>
+                            <th>Surgery Date</th>
+                            <th>Remarks</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <tr>
-                            <td>1</td>
-                            <td>TAG-1001</td>
-                            <td>Male</td>
-                            <td>18 kg</td>
-                            <td>Brown</td>
-                            <td>Yes</td>
-                            <td>Ketamine</td>
-                            <td class="action-icons">
-                              <a href="add_dog_catcher.html" class="btn btn-sm action-icon-btn action-edit text-warning" title="Edit">
-                                <i class="bx bx-edit"></i>
-                              </a>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>2</td>
-                            <td>TAG-1002</td>
-                            <td>Female</td>
-                            <td>16 kg</td>
-                            <td>Black</td>
-                            <td>No</td>
-                            <td>Isoflurane</td>
-                            <td class="action-icons">
-                              <a href="add_dog_catcher.html" class="btn btn-sm action-icon-btn action-edit text-warning" title="Edit">
-                                <i class="bx bx-edit"></i>
-                              </a>
-                            </td>
-                          </tr>
-                        </tbody>
+                        <tbody></tbody>
                       </table>
                     </div>
                   </div>
@@ -357,25 +332,67 @@
 
 @push('scripts')
 
+<script src="{{ asset('admin-assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
 <script>
       $(function () {
-        var dailyRunningTable = $('#daily-running-table').DataTable({
-          responsive: true
-        });
-
-        var summarySection = document.getElementById('summary-section');
-        var resultsSection = document.getElementById('results-section');
         var projectSearch = document.getElementById('project-search');
         var runningDate = document.getElementById('running-date');
+        var summarySection = document.getElementById('summary-section');
+        var resultsSection = document.getElementById('results-section');
+
+        if (window.flatpickr) {
+          flatpickr('#running-date', {
+            dateFormat: 'Y-m-d',
+            allowInput: true
+          });
+        }
+
+        var dailyRunningTable = $('#daily-running-table').DataTable({
+          processing: true,
+          serverSide: true,
+          responsive: true,
+          autoWidth: false,
+          ajax: {
+            url: '{{ route('daily-running-sheet') }}',
+            data: function (d) {
+              d.project_id = projectSearch.value;
+              d.running_date = runningDate.value;
+            }
+          },
+          columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'project_name', name: 'project_name' },
+            { data: 'hospital_name', name: 'hospital_name' },
+            { data: 'tag_no', name: 'catching_records.tag_no' },
+            { data: 'catch_date_formatted', name: 'catching_records.catch_date' },
+            { data: 'status', name: 'catching_records.status' },
+            { data: 'body_weight', name: 'dog_operations.body_weight' },
+            { data: 'surgery_date_formatted', name: 'dog_operations.operation_date' },
+            { data: 'surgery_remarks', name: 'dog_operations.remarks' }
+          ]
+        });
+
+        function reloadDailyTable() {
+          summarySection.classList.remove('d-none');
+          resultsSection.classList.remove('d-none');
+          dailyRunningTable.ajax.reload(null, false);
+          dailyRunningTable.columns.adjust().draw(false);
+        }
 
         document.getElementById('back-btn').addEventListener('click', function () {
           window.history.back();
         });
 
         document.getElementById('search-btn').addEventListener('click', function () {
-          summarySection.classList.remove('d-none');
-          resultsSection.classList.remove('d-none');
-          dailyRunningTable.columns.adjust().draw(false);
+          reloadDailyTable();
+        });
+
+        projectSearch.addEventListener('change', function () {
+          reloadDailyTable();
+        });
+
+        runningDate.addEventListener('change', function () {
+          reloadDailyTable();
         });
 
         document.getElementById('reset-btn').addEventListener('click', function () {
@@ -383,7 +400,7 @@
           runningDate.value = '';
           summarySection.classList.add('d-none');
           resultsSection.classList.add('d-none');
-          dailyRunningTable.search('').draw();
+          dailyRunningTable.ajax.reload(null, false);
         });
       });
     </script>

@@ -291,12 +291,12 @@
                     <nav aria-label="breadcrumb">
                       <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('manage-project') }}">Manage Project</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('manage-project.index') }}">Manage Project</a></li>
                         <li class="breadcrumb-item active" aria-current="page"><a href="{{ route('view-project') }}">View Project</a></li>
                       </ol>
                     </nav>
                   </div>
-                  <a href="{{ route('manage-project') }}" class="btn btn-light btn-sm">
+                  <a href="{{ route('manage-project.index') }}" class="btn btn-light btn-sm">
                     <i class="fa-solid fa-arrow-left me-1"></i> Back
                   </a>
                 </div>

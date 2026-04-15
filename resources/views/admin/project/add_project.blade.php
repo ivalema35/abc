@@ -458,39 +458,42 @@
               <div class="card manage-project-head-card">
                 <div class="project-top-bar d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
                   <div>
-                    <h2 class="page-title d-flex align-items-center gap-2"><i class="fa-regular fa-folder-open"></i> Add Project</h2>
+                      <h2 class="page-title d-flex align-items-center gap-2"><i class="fa-regular fa-folder-open"></i> {{ isset($project) ? 'Edit Project' : 'Add Project' }}</h2>
                     <nav aria-label="breadcrumb">
                       <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('manage-project') }}">Manage Project</a></li>
-                        <li class="breadcrumb-item active" aria-current="page"><a href="{{ route('add-project') }}">Add Project</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('manage-project.index') }}">Manage Project</a></li>
+                          <li class="breadcrumb-item active" aria-current="page"><a href="{{ route('add-project') }}">{{ isset($project) ? 'Edit Project' : 'Add Project' }}</a></li>
                       </ol>
                     </nav>
                   </div>
-                  <a href="{{ route('manage-project') }}" class="btn btn-back">
+                  <a href="{{ route('manage-project.index') }}" class="btn btn-back">
                     <i class="fa-solid fa-arrow-left me-1"></i> Back
                   </a>
                 </div>
 
                 <div class="card project-list-card" id="project-information-card">
                   <div class="card-header">
-                    <h4 class="card-title">Project Information</h4>
+                    <h4 class="card-title">{{ isset($project) ? 'Edit Project' : 'Add Project' }}</h4>
                   </div>
                   <div class="card-body">
                     
-                    <form>
+                    <form id="projectForm" action="javascript:void(0);" method="POST">
+                      @csrf
+                      <input type="hidden" name="id" id="project_id" value="{{ isset($project) ? $project->id : '' }}">
                       <div class="row g-4">
                         <div class="col-md-6">
                           <label class="form-label" for="projectName">Name <span class="text-danger">*</span></label>
-                          <input type="text" id="projectName" class="form-control" placeholder="Enter project name" />
+                          <input type="text" id="projectName" name="name" value="{{ isset($project) ? $project->name : '' }}" class="form-control" placeholder="Enter project name" />
                         </div>
                         <div class="col-md-6">
                           <label class="form-label" for="ngoField">NGO Field <span class="text-danger">*</span></label>
                           <div class="input-group project-field-group">
-                            <select id="ngoField" class="form-select">
+                            <select id="ngoField" name="ngo_id" class="form-select">
                               <option value="" selected>Select NGO</option>
-                              <option>NGO One</option>
-                              <option>NGO Two</option>
+                              @foreach($ngos as $ngo)
+                                <option value="{{ $ngo->id }}" {{ (isset($project) && $project->ngo_id == $ngo->id) ? 'selected' : '' }}>{{ $ngo->name }}</option>
+                              @endforeach
                             </select>
                             <button
                               class="btn btn-outline-primary field-picker-btn"
@@ -506,10 +509,11 @@
                         <div class="col-md-6">
                           <label class="form-label" for="cityField">City <span class="text-danger">*</span></label>
                           <div class="input-group project-field-group">
-                            <select id="cityField" class="form-select">
+                            <select id="cityField" name="city_id" class="form-select city-list-dropdown">
                               <option value="" selected>Select city</option>
-                              <option>Surat</option>
-                              <option>Ahmedabad</option>
+                              @foreach($cities as $city)
+                                <option value="{{ $city->id }}" {{ (isset($project) && $project->city_id == $city->id) ? 'selected' : '' }}>{{ $city->city_name }}</option>
+                              @endforeach
                             </select>
                             <button
                               class="btn btn-outline-primary field-picker-btn"
@@ -524,10 +528,11 @@
                         <div class="col-md-6">
                           <label class="form-label" for="hospitalField">Hospital <span class="text-danger">*</span></label>
                           <div class="input-group project-field-group">
-                            <select id="hospitalField" class="form-select">
+                            <select id="hospitalField" name="hospital_id" class="form-select hospital-list-dropdown">
                               <option value="" selected>Select hospital</option>
-                              <option>Civil Hospital</option>
-                              <option>General Hospital</option>
+                              @foreach($hospitals as $hospital)
+                                <option value="{{ $hospital->id }}" {{ (isset($project) && $project->hospital_id == $hospital->id) ? 'selected' : '' }}>{{ $hospital->name }}</option>
+                              @endforeach
                             </select>
                             <button
                               class="btn btn-outline-primary field-picker-btn"
@@ -543,10 +548,11 @@
                         <div class="col-md-6">
                           <label class="form-label" for="vehicleField">Vehicle <span class="text-danger">*</span></label>
                           <div class="input-group project-field-group">
-                            <select id="vehicleField" class="form-select">
+                            <select id="vehicleField" name="vehicle_id" class="form-select">
                               <option value="" selected>Select vehicle</option>
-                              <option>GJ-01-AB-1234</option>
-                              <option>GJ-05-CD-9876</option>
+                              @foreach($vehicles as $vehicle)
+                                <option value="{{ $vehicle->id }}" {{ (isset($project) && $project->vehicle_id == $vehicle->id) ? 'selected' : '' }}>{{ $vehicle->vehicle_number }}</option>
+                              @endforeach
                             </select>
                             <button
                               class="btn btn-outline-primary field-picker-btn"
@@ -560,29 +566,29 @@
                         </div>
                         <div class="col-md-6 project-select-all-col">
                           
-                          <button type="button" class="btn btn-dark w-100 btn-select-all ">Select All</button>
+                          <button type="button" id="selectAllVehicles" class="btn btn-dark w-100 btn-select-all">Select All</button>
                         </div>
 
                         <div class="col-md-4">
                           <label class="form-label" for="rfidStatus">RFID Status <span class="text-danger">*</span></label>
-                          <select id="rfidStatus" class="form-select">
+                          <select id="rfidStatus" name="rfid_enabled" class="form-select">
                             <option value="" selected>Select status</option>
-                            <option>Active</option>
-                            <option>Inactive</option>
+                            <option value="1" {{ isset($project) && $project->rfid_enabled ? 'selected' : '' }}>Active</option>
+                            <option value="0" {{ isset($project) && ! $project->rfid_enabled ? 'selected' : '' }}>Inactive</option>
                           </select>
                         </div>
                         <div class="col-md-4">
                           <label class="form-label" for="contactNo">Contact <span class="text-danger">*</span></label>
-                          <input type="tel" id="contactNo" class="form-control" placeholder="Enter contact number" />
+                          <input type="tel" id="contactNo" name="contact" value="{{ isset($project) ? $project->contact : '' }}" class="form-control" placeholder="Enter contact number" />
                         </div>
                         <div class="col-md-4">
                           <label class="form-label" for="pinCode">4 Digit Pin <span class="text-danger">*</span></label>
-                          <input type="password" id="pinCode" class="form-control" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" placeholder="0000" />
+                          <input type="password" id="pinCode" name="pin" value="{{ isset($project) ? $project->pin : '' }}" class="form-control" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" placeholder="0000" />
                         </div>
                       </div>
 
                       <div class="d-flex flex-wrap gap-2 mt-4 form-action-row">
-                        <button type="submit" class="btn bg-black text-white">Add Project</button>
+                        <button type="submit" class="btn bg-black text-white">{{ isset($project) ? 'Update' : 'Save' }}</button>
                         <a href="manage_project.html" class="btn btn-label-secondary">Cancel</a>
                       </div>
                     </form>
@@ -721,14 +727,15 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form id="cityModalForm" novalidate>
+            <form id="cityModalForm" action="{{ route('manage-city.store') }}" method="POST" novalidate>
+              @csrf
               <label for="cityNameInput" class="form-label">City Name <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="cityNameInput" placeholder="Enter city name" required />
+              <input type="text" class="form-control" id="cityNameInput" name="city_name" placeholder="Enter city name" required />
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="saveCityBtn">Add City</button>
+            <button type="submit" form="cityModalForm" class="btn btn-primary" id="saveCityBtn">Add City</button>
           </div>
         </div>
       </div>
@@ -743,48 +750,57 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form id="hospitalModalForm" novalidate>
+            <form id="hospitalModalForm" action="{{ route('manage-hospital.store') }}" method="POST" novalidate>
+              @csrf
+              <input type="hidden" name="quick_add" value="1">
               <div class="row g-3">
                 <div class="col-md-6">
                   <label for="hospitalNameInput" class="form-label">Hospital Name <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="hospitalNameInput" placeholder="Enter hospital name" required />
+                  <input type="text" class="form-control" id="hospitalNameInput" name="name" placeholder="Enter hospital name" required />
                 </div>
                 <div class="col-md-6">
                   <label for="hospitalContactInput" class="form-label">Hospital Contact <span class="text-danger">*</span></label>
-                  <input type="tel" class="form-control" id="hospitalContactInput" placeholder="Enter contact number" required />
+                  <input type="tel" class="form-control" id="hospitalContactInput" name="contact" placeholder="Enter contact number" required />
                 </div>
                 <div class="col-md-6">
                   <label for="hospitalEmailInput" class="form-label">Email <span class="text-danger">*</span></label>
-                  <input type="email" class="form-control" id="hospitalEmailInput" placeholder="Enter email" required />
+                  <input type="email" class="form-control" id="hospitalEmailInput" name="email" placeholder="Enter email" />
                 </div>
                 <div class="col-md-6">
                   <label for="hospitalCityInput" class="form-label">City <span class="text-danger">*</span></label>
-                  <select class="form-select" id="hospitalCityInput" required>
-                    <option value="" selected>Select city</option>
+                  <select class="form-select city-list-dropdown" id="hospitalCityInput" name="city_id" required>
+                    <option value="">Select City</option>
+                    @foreach($cities as $city)
+                      <option value="{{ $city->id }}">{{ $city->name ?? $city->city_name }}</option>
+                    @endforeach
                   </select>
                 </div>
                 <div class="col-md-6">
+                  <label for="hospitalLoginPinInput" class="form-label">Login PIN <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="hospitalLoginPinInput" name="login_pin" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" placeholder="Enter 4 digit login pin" required />
+                </div>
+                <div class="col-md-6">
                   <label for="hospitalTagStartInput" class="form-label">Tag Number Start <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="hospitalTagStartInput" placeholder="Enter tag number start" required />
+                  <input type="text" class="form-control" id="hospitalTagStartInput" name="rfid_start" placeholder="Enter tag number start" />
                 </div>
                 <div class="col-md-6">
                   <label for="hospitalTagEndInput" class="form-label">Tag Number End <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="hospitalTagEndInput" placeholder="Enter tag number end" required />
+                  <input type="text" class="form-control" id="hospitalTagEndInput" name="rfid_end" placeholder="Enter tag number end" />
                 </div>
                 <div class="col-md-6">
                   <label for="hospitalNetQtyInput" class="form-label">Catching Net Quantity <span class="text-danger">*</span></label>
-                  <input type="number" class="form-control" id="hospitalNetQtyInput" min="0" placeholder="Enter catching net quantity" required />
+                  <input type="number" class="form-control" id="hospitalNetQtyInput" name="net_quantity" min="0" placeholder="Enter catching net quantity" required />
                 </div>
                 <div class="col-12">
                   <label for="hospitalAddressInput" class="form-label">Address <span class="text-danger">*</span></label>
-                  <textarea class="form-control" id="hospitalAddressInput" rows="3" placeholder="Enter hospital address" required></textarea>
+                  <textarea class="form-control" id="hospitalAddressInput" name="address" rows="3" placeholder="Enter hospital address"></textarea>
                 </div>
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="saveHospitalBtn">Add Hospital</button>
+            <button type="submit" form="hospitalModalForm" class="btn btn-primary" id="saveHospitalBtn">Add Hospital</button>
           </div>
         </div>
       </div>
@@ -799,30 +815,45 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form id="vehicleModalForm" novalidate>
+            <form id="vehicleModalForm" action="{{ route('manage-vehicle.store') }}" method="POST" novalidate>
+              @csrf
               <div class="row g-3">
                 <div class="col-12">
                   <label for="vehicleCityInput" class="form-label">City <span class="text-danger">*</span></label>
-                  <select class="form-select" id="vehicleCityInput" required>
-                    <option value="" selected>Select city</option>
+                  <select class="form-select city-list-dropdown" id="vehicleCityInput" name="city_id" required>
+                    <option value="">Select City</option>
+                    @foreach($cities as $city)
+                      <option value="{{ $city->id }}">{{ $city->name ?? $city->city_name }}</option>
+                    @endforeach
                   </select>
                 </div>
                 <div class="col-12">
                   <label for="vehicleHospitalInput" class="form-label">Hospital <span class="text-danger">*</span></label>
-                  <select class="form-select" id="vehicleHospitalInput" required>
-                    <option value="" selected>Select hospital</option>
+                  <select class="form-select hospital-list-dropdown" id="vehicleHospitalInput" name="hospital_id" required>
+                    <option value="">Select Hospital</option>
+                    @foreach($hospitals as $hospital)
+                      <option value="{{ $hospital->id }}">{{ $hospital->name }}</option>
+                    @endforeach
                   </select>
                 </div>
                 <div class="col-12">
                   <label for="vehicleNumberPlateInput" class="form-label">Vehicle Number Plate <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="vehicleNumberPlateInput" placeholder="Enter vehicle number plate" required />
+                  <input type="text" class="form-control" id="vehicleNumberPlateInput" name="vehicle_number" placeholder="Enter vehicle number plate" required />
+                </div>
+                <div class="col-12">
+                  <label for="vehicleLoginIdInput" class="form-label">Login ID <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="vehicleLoginIdInput" name="login_id" placeholder="Enter vehicle login ID" required />
+                </div>
+                <div class="col-12">
+                  <label for="vehicleLoginPasswordInput" class="form-label">Login Password <span class="text-danger">*</span></label>
+                  <input type="password" class="form-control" id="vehicleLoginPasswordInput" name="login_password" placeholder="Enter vehicle login password" required />
                 </div>
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="saveVehicleBtn">Add Vehicle</button>
+            <button type="submit" form="vehicleModalForm" class="btn btn-primary" id="saveVehicleBtn">Add Vehicle</button>
           </div>
         </div>
       </div>
@@ -837,40 +868,249 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form id="ngoModalForm" novalidate>
+            <form id="ngoModalForm" action="{{ route('add-ngo.store') }}" method="POST" novalidate>
+              @csrf
               <div class="row g-3">
                 <div class="col-md-6">
                   <label for="ngoNameInput" class="form-label">NGO Name <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="ngoNameInput" placeholder="Enter NGO name" required />
+                  <input type="text" class="form-control" id="ngoNameInput" name="name" placeholder="Enter NGO name" required />
                 </div>
                 <div class="col-md-6">
                   <label for="ngoContactInput" class="form-label">NGO Contact <span class="text-danger">*</span></label>
-                  <input type="tel" class="form-control" id="ngoContactInput" placeholder="Enter contact number" required />
+                  <input type="tel" class="form-control" id="ngoContactInput" name="contact" placeholder="Enter contact number" required />
                 </div>
                 <div class="col-md-6">
                   <label for="ngoEmailInput" class="form-label">NGO Email <span class="text-danger">*</span></label>
-                  <input type="email" class="form-control" id="ngoEmailInput" placeholder="Enter email" required />
+                  <input type="email" class="form-control" id="ngoEmailInput" name="email" placeholder="Enter email" />
                 </div>
                 <div class="col-md-6">
                   <label for="ngoCityInput" class="form-label">NGO City <span class="text-danger">*</span></label>
-                  <select class="form-select" id="ngoCityInput" required>
-                    <option value="" selected>Select city</option>
+                  <select class="form-select city-list-dropdown" id="ngoCityInput" name="city_id" required>
+                    <option value="">Select City</option>
+                    @foreach($cities as $city)
+                      <option value="{{ $city->id }}">{{ $city->name ?? $city->city_name }}</option>
+                    @endforeach
                   </select>
                 </div>
                 <div class="col-12">
                   <label for="ngoAddressInput" class="form-label">NGO Address <span class="text-danger">*</span></label>
-                  <textarea class="form-control" id="ngoAddressInput" rows="3" placeholder="Enter NGO address" required></textarea>
+                  <textarea class="form-control" id="ngoAddressInput" name="address" rows="3" placeholder="Enter NGO address"></textarea>
                 </div>
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="saveNgoBtn">Save NGO</button>
+            <button type="submit" form="ngoModalForm" class="btn btn-primary" id="saveNgoBtn">Save NGO</button>
           </div>
         </div>
       </div>
     </div>
+
+      @push('scripts')
+      <script>
+        $.ajaxSetup({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
+
+        $('#selectAllVehicles').on('click', function(e) {
+          e.preventDefault();
+          let vehicleDropdown = $('#vehicleField');
+
+          vehicleDropdown.find('option').prop('selected', true);
+          vehicleDropdown.trigger('change');
+        });
+
+        function setupQuickAdd(formId, modalId, targetSelectId, mapResponseToOption) {
+          $(formId).on('submit', function(e) {
+            e.preventDefault();
+
+            let form = $(this);
+            let submitBtn = $('button[form="' + form.attr('id') + '"]');
+            let originalText = submitBtn.text();
+            submitBtn.text('Saving...').prop('disabled', true);
+
+            $.ajax({
+              url: form.attr('action'),
+              type: 'POST',
+              data: new FormData(this),
+              processData: false,
+              contentType: false,
+              success: function(response) {
+                submitBtn.text(originalText).prop('disabled', false);
+
+                if (response.success || response.status === 'success') {
+                  $(modalId).modal('hide');
+                  form[0].reset();
+
+                  let optionData = mapResponseToOption ? mapResponseToOption(response, form) : null;
+                  if (optionData && optionData.id && optionData.text) {
+                    let target = $(targetSelectId);
+                    let existing = target.find('option[value="' + optionData.id + '"]');
+
+                    if (!existing.length) {
+                      target.append(new Option(optionData.text, optionData.id, true, true));
+                    } else {
+                      existing.prop('selected', true);
+                    }
+
+                    target.trigger('change');
+                  }
+
+                  if (typeof showToast === 'function') {
+                    showToast('success', response.message || 'Saved successfully.');
+                  }
+                }
+              },
+              error: function(xhr) {
+                submitBtn.text(originalText).prop('disabled', false);
+                let errorMsg = 'Error saving data. Please try again.';
+
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                  errorMsg = Object.values(xhr.responseJSON.errors)[0][0];
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                  errorMsg = xhr.responseJSON.message;
+                }
+
+                if (typeof showToast === 'function') {
+                  showToast('error', errorMsg);
+                } else {
+                  alert(errorMsg);
+                }
+              }
+            });
+          });
+        }
+
+        setupQuickAdd('#ngoModalForm', '#ngoModal', '#ngoField', function(response, form) {
+          if (response.ngo) {
+            return { id: response.ngo.id, text: response.ngo.name };
+          }
+
+          return null;
+        });
+
+        // Custom Broadcast Handler for City Quick-Add
+        $('#cityModalForm').on('submit', function(e) {
+          e.preventDefault();
+          let form = $(this);
+          let submitBtn = form.find('button[type="submit"]');
+          let originalText = submitBtn.text();
+          submitBtn.text('Saving...').prop('disabled', true);
+
+          $.ajax({
+            url: form.attr('action'),
+            type: 'POST',
+            data: new FormData(this),
+            processData: false,
+            contentType: false,
+            success: function(response) {
+              submitBtn.text(originalText).prop('disabled', false);
+
+              if (response.status === 'success' || response.success) {
+                $('#cityModal').modal('hide');
+                form[0].reset();
+
+                if (response.city) {
+                  let cityName = response.city.name || response.city.city_name || '';
+                  let optionHtml = `<option value="${response.city.id}">${cityName}</option>`;
+
+                  $('.city-list-dropdown').append(optionHtml).trigger('change');
+                  $('#cityField').val(response.city.id).trigger('change');
+                }
+
+                if (typeof showToast === 'function') showToast('success', response.message);
+              }
+            },
+            error: function(xhr) {
+              submitBtn.text(originalText).prop('disabled', false);
+              alert('Error saving data. Please try again.');
+            }
+          });
+        });
+
+        // Custom Broadcast Handler for Hospital Quick-Add
+        $('#hospitalModalForm').on('submit', function(e) {
+          e.preventDefault();
+          let form = $(this);
+          let submitBtn = form.find('button[type="submit"]');
+          let originalText = submitBtn.text();
+          submitBtn.text('Saving...').prop('disabled', true);
+
+          $.ajax({
+            url: form.attr('action'),
+            type: "POST",
+            data: new FormData(this),
+            processData: false,
+            contentType: false,
+            success: function(response) {
+              submitBtn.text(originalText).prop('disabled', false);
+
+              if (response.status === 'success' || response.success) {
+                $('#hospitalModal').modal('hide');
+                form[0].reset();
+
+                if (response.hospital) {
+                  let optionHtml = `<option value="${response.hospital.id}">${response.hospital.name}</option>`;
+
+                  $('.hospital-list-dropdown').append(optionHtml).trigger('change');
+                  $('#hospitalField').val(response.hospital.id).trigger('change');
+                }
+
+                if (typeof showToast === 'function') showToast('success', response.message);
+              }
+            },
+            error: function(xhr) {
+              submitBtn.text(originalText).prop('disabled', false);
+              alert('Error saving data. Please try again.');
+            }
+          });
+        });
+
+        setupQuickAdd('#vehicleModalForm', '#vehicleModal', '#vehicleField', function(response, form) {
+          if (response.vehicle) {
+            return { id: response.vehicle.id, text: response.vehicle.vehicle_number || response.vehicle.name };
+          }
+
+          return null;
+        });
+
+        $('#projectForm').on('submit', function(e) {
+          e.preventDefault();
+          let formData = new FormData(this);
+          let submitBtn = $(this).find('button[type="submit"]');
+          let originalText = submitBtn.text();
+          submitBtn.text('Saving...').prop('disabled', true);
+
+          $.ajax({
+            url: "{{ route('manage-project.store') }}",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+              if(response.status === 'success') {
+                if (typeof showToast === 'function') showToast('success', response.message);
+                setTimeout(() => {
+                  window.location.href = "{{ route('manage-project.index') }}";
+                }, 1500);
+              }
+            },
+            error: function(xhr) {
+              submitBtn.text(originalText).prop('disabled', false);
+              let errorMsg = 'Something went wrong!';
+              if(xhr.responseJSON && xhr.responseJSON.errors) {
+                errorMsg = Object.values(xhr.responseJSON.errors)[0][0];
+              }
+              if (typeof showToast === 'function') showToast('error', errorMsg);
+              else alert(errorMsg);
+            }
+          });
+        });
+      </script>
+      @endpush
 
      @endsection
 

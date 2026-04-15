@@ -246,54 +246,6 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <td>1</td>
-                            <td>216</td>
-                            <td>Rajkot Municipan Corporation</td>
-                            <td>street</td>
-                            <td>male</td>
-                            <td>Bhagavti para,Rajkot Gujarat-360003 India</td>
-                            <td><img src="dog1.jpg" alt="Dog Image" width="50"></td>
-                            <td>2023-01-01</td>
-                            <td class="action-icons">
-                              <a href="{{ route('view-r4r-dog') }}" class="btn btn-sm action-icon-btn action-view text-info" title="View">
-                                <i class="bx bx-show"></i>
-                              </a>
-                              <button type="button" class="btn btn-sm action-icon-btn action-release text-success" title="Release" >
-                                <i class="bx bx-share"></i>
-                              </button>
-                              <button type="button" class="btn btn-sm action-icon-btn action-owner text-info" title="Owner" >
-                                <i class="bx bx-user-check"></i>
-                              </button>
-                              <button type="button" class="btn btn-sm action-icon-btn action-expired text-danger" title="Expired" >
-                                <i class="bx bx-time"></i>
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>2</td>
-                            <td>222</td>
-                            <td>Rajkot Municipan Corporation</td>
-                            <td>street</td>
-                            <td>male</td>
-                            <td>Bhagavti para,Rajkot Gujarat-360003 India</td>
-                            <td><img src="dog2.jpg" alt="Dog Image" width="50"></td>
-                            <td>2023-02-01</td>
-                            <td class="action-icons">
-                              <a href="view_r4r_dog.html" class="btn btn-sm action-icon-btn action-view text-info" title="View">
-                                <i class="bx bx-show"></i>
-                              </a>
-                              <button type="button" class="btn btn-sm action-icon-btn action-release text-success" title="Release" >
-                                <i class="bx bx-share"></i>
-                              </button>
-                              <button type="button" class="btn btn-sm action-icon-btn action-owner text-info" title="Owner" >
-                                <i class="bx bx-user-check"></i>
-                              </button>
-                              <button type="button" class="btn btn-sm action-icon-btn action-expired text-danger" title="Expired" >
-                                <i class="bx bx-time"></i>
-                              </button>
-                            </td>
-                          </tr>
                         </tbody>
                       </table>
                     </div>
@@ -302,4 +254,135 @@
               </div>
             </div>
             <!-- / Content -->
+
+@push('scripts')
+<script>
+$(document).ready(function () {
+  var table = $('#r4r-dog-master-table').DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: "{{ route('manage-r4r-dog-list') }}",
+    columns: [
+      { data: 'DT_RowIndex', orderable: false, searchable: false },
+      { data: 'tag_no' },
+      { data: 'project_name' },
+      { data: 'dog_type' },
+      { data: 'gender' },
+      { data: 'address' },
+      { data: 'image', orderable: false, searchable: false },
+      { data: 'catch_date' },
+      { data: 'action', orderable: false, searchable: false }
+    ]
+  });
+
+  function updateR4rStatus(id, status, remarks) {
+    return $.ajax({
+      url: "{{ url('r4r/update-status') }}/" + id,
+      type: 'POST',
+      data: {
+        status: status,
+        remarks: remarks || ''
+      },
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+  }
+
+  $(document).on('click', '.action-release', function () {
+    var id = $(this).data('id');
+    var tagNo = $(this).data('tag-no');
+
+    Swal.fire({
+      title: 'Release dog ' + tagNo + '?',
+      text: 'Confirm dog release and add remarks/location details.',
+      icon: 'question',
+      input: 'textarea',
+      inputPlaceholder: 'Release remarks / location details',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Release'
+    }).then(function (result) {
+      if (!result.isConfirmed) {
+        return;
+      }
+
+      updateR4rStatus(id, 'Released', result.value)
+        .done(function (response) {
+          Swal.fire('Success', response.message, 'success');
+          table.ajax.reload(null, false);
+        })
+        .fail(function (xhr) {
+          var message = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Failed to update status.';
+          Swal.fire('Error', message, 'error');
+        });
+    });
+  });
+
+  $(document).on('click', '.action-owner', function () {
+    var id = $(this).data('id');
+    var tagNo = $(this).data('tag-no');
+
+    Swal.fire({
+      title: 'Return dog ' + tagNo + ' to owner?',
+      text: 'Add owner name/details before confirming.',
+      icon: 'info',
+      input: 'textarea',
+      inputPlaceholder: 'Owner name / contact / handover details',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Return to Owner'
+    }).then(function (result) {
+      if (!result.isConfirmed) {
+        return;
+      }
+
+      updateR4rStatus(id, 'Returned to Owner', result.value)
+        .done(function (response) {
+          Swal.fire('Success', response.message, 'success');
+          table.ajax.reload(null, false);
+        })
+        .fail(function (xhr) {
+          var message = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Failed to update status.';
+          Swal.fire('Error', message, 'error');
+        });
+    });
+  });
+
+  $(document).on('click', '.action-expired', function () {
+    var id = $(this).data('id');
+    var tagNo = $(this).data('tag-no');
+
+    Swal.fire({
+      title: 'Mark dog ' + tagNo + ' as expired?',
+      text: 'Please provide a reason for expiry.',
+      icon: 'warning',
+      input: 'textarea',
+      inputPlaceholder: 'Reason for expiry',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Mark Expired'
+    }).then(function (result) {
+      if (!result.isConfirmed) {
+        return;
+      }
+
+      updateR4rStatus(id, 'Expired', result.value)
+        .done(function (response) {
+          Swal.fire('Success', response.message, 'success');
+          table.ajax.reload(null, false);
+        })
+        .fail(function (xhr) {
+          var message = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Failed to update status.';
+          Swal.fire('Error', message, 'error');
+        });
+    });
+  });
+
+  $(document).on('click', '.action-view', function (e) {
+    e.preventDefault();
+    var id = $(this).data('id');
+    window.location.href = "{{ url('view-r4r-dog') }}/" + id;
+  });
+});
+</script>
+@endpush
+
 @endsection            

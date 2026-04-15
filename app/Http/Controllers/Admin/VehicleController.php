@@ -121,7 +121,7 @@ class VehicleController extends Controller
             $imagePath = 'uploads/vehicles/' . $filename;
         }
 
-        Vehicle::create([
+        $vehicle = Vehicle::create([
             'hospital_id' => $request->hospital_id,
             'city_id' => $request->city_id,
             'vehicle_number' => $request->vehicle_number,
@@ -132,8 +132,14 @@ class VehicleController extends Controller
         ]);
 
         return response()->json([
+            'status' => 'success',
             'success' => true,
             'message' => 'Vehicle added successfully!',
+            'vehicle' => [
+                'id' => $vehicle->id,
+                'name' => $vehicle->vehicle_number,
+                'vehicle_number' => $vehicle->vehicle_number,
+            ],
             'redirect_url' => route('manage-vehicle.index'),
         ]);
     }

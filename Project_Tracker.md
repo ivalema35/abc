@@ -44,14 +44,23 @@
 * [x] DataTables AJAX Retrofit applied across ALL Master Data for max performance.
 * [x] Global UI/UX: SweetAlert2 & Toast Integration (All Views).
 * [x] Phase 2.13: Consolidated Staff Master (Static UI & Sidebar Preview Wired).
+* [x] **Phase 2.14: Project Master CRUD** (Backend, Modal UI, & Routes Wired).
+* [x] **UI Hotfix:** Resolved Sneat theme duplicate layout render and asset path (Sidebar restored).
+* [x] **Phase 3.1: Dog Catching Records** (Cascading dropdowns, FormData AJAX, and Rule #5 Spatie Permissions wired).
+* [x] **Phase 3.2: Surgery / Operation Records** (Backend Scaffold, V2.2 DataTables, Dynamic Modal Inject, Status Flow & Permissions wired).
+* [x] **Phase 3.3: Post-Operative Care (Observation)** (Minimal Approach, Timeline Audit Logs `dog_stage_logs`, DataTables AJAX, SweetAlert2 Transitions).
+* [x] Phase 3.4: R4R (Ready for Release) & Completed Records (End-to-end Lifecycle finished).
+* [x] **Phase 4.1: Dashboard Real-Time Wiring** (Live Counters & ApexCharts lifecycle integration).
 
-### Active Task
+### 🔄 Active Task
+* [ ] **Phase 4.2: Reports Module**
+  - Audit existing reports UI (Daily Running Sheet, Performance Reports).
+  - Implement ReportController with filtering logic.
+  - Add Excel/PDF export features (Maatwebsite/Excel integration).
 
-
-### Pending Master Modules (Queue)
-phase 3
-
-
+### Pending Modules (Queue)
+* [ ] Phase 4.3: Final UI Polish & Project Handover.
+      
 ### Notes & Changes from Plan
 * Replaced fragmented Dropzone setups with a single master script in `layout.blade.php`.
 * Changed Spatie's default `permissions` table to include a `module` column for dynamic UI grouping.

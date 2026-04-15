@@ -134,7 +134,7 @@ class NgoController extends Controller
             $imagePath = 'uploads/ngos/' . $filename;
         }
 
-        Ngo::create([
+        $ngo = Ngo::create([
             'city_id' => $request->city_id,
             'name' => $request->name,
             'contact' => $request->contact,
@@ -145,8 +145,13 @@ class NgoController extends Controller
         ]);
 
         return response()->json([
+            'status' => 'success',
             'success' => true,
             'message' => 'NGO added successfully!',
+            'ngo' => [
+                'id' => $ngo->id,
+                'name' => $ngo->name,
+            ],
             'redirect_url' => route('manage-ngo'),
         ]);
     }

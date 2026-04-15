@@ -5,7 +5,7 @@
   class="light-style layout-navbar-fixed layout-menu-fixed layout-compact"
   dir="ltr"
   data-theme="theme-default"
-  data-assets-path="{{ asset('admin-assets/') }}"
+  data-assets-path="{{ asset('admin-assets') }}/"
   data-template="vertical-menu-template-no-customizer"
   data-style="light">
   <head>
@@ -853,7 +853,7 @@
               </a>
               <ul class="menu-sub">
                 <li class="menu-item">
-                  <a href="{{ route('manage-project') }}" class="menu-link">
+                  <a href="{{ route('manage-project.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-folder"></i>
                     <div class="text-truncate" data-i18n="Manage Project">Manage Project</div>
                   </a>
@@ -969,9 +969,9 @@
             </li>
             @endcan
             <li class="menu-item">
-              <a href="{{ route('manage-dog-catcher') }}" class="menu-link">
+              <a href="{{ route('catching-records.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-user-pin"></i>
-                <div class="text-truncate" data-i18n="Dog Catcher">Dog Catcher</div>
+                <div class="text-truncate" data-i18n="Catching Records">Catching Records</div>
               </a>
             </li>
             <li class="menu-item">
@@ -1245,6 +1245,9 @@
 
         var chartTextColor = '#7a6d67';
         var chartBorderColor = 'rgba(55, 52, 53, 0.12)';
+        var dashboardChartData = window.dashboardChartData || {};
+        var weeklyData = dashboardChartData.weekly || {};
+        var monthlyMixData = dashboardChartData.monthlyMix || {};
 
         var dailyOverviewChart = document.querySelector('#dailyOverviewChart');
         if (dailyOverviewChart && typeof ApexCharts !== 'undefined') {
@@ -1259,17 +1262,17 @@
               {
                 name: 'Caught',
                 type: 'column',
-                data: [42, 51, 49, 62, 74, 88, 96]
-              },
-              {
-                name: 'Operated',
-                type: 'line',
-                data: [28, 36, 34, 47, 59, 71, 82]
+                data: weeklyData.caught || [0, 0, 0, 0, 0, 0, 0]
               },
               {
                 name: 'Released',
                 type: 'line',
-                data: [18, 24, 22, 31, 46, 58, 63]
+                data: weeklyData.released || [0, 0, 0, 0, 0, 0, 0]
+              },
+              {
+                name: 'Expired',
+                type: 'line',
+                data: weeklyData.expired || [0, 0, 0, 0, 0, 0, 0]
               }
             ],
             stroke: {
@@ -1305,7 +1308,7 @@
               }
             },
             xaxis: {
-              categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+              categories: weeklyData.labels || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
               axisBorder: { show: false },
               axisTicks: { show: false },
               labels: { style: { colors: chartTextColor, fontSize: '12px' } }
@@ -1332,8 +1335,8 @@
               height: 260,
               type: 'donut'
             },
-            labels: ['Catch', 'Sterilization', 'ARV', 'Release', 'Emergency'],
-            series: [34, 26, 18, 14, 8],
+            labels: monthlyMixData.labels || ['In Process', 'Observation', 'R4R', 'Released', 'Expired'],
+            series: monthlyMixData.series || [0, 0, 0, 0, 0],
             colors: ['#373435', '#8f6f62', '#b8927e', '#d7b9aa', '#ead8cb'],
             stroke: {
               width: 0
@@ -1359,10 +1362,11 @@
                     },
                     total: {
                       show: true,
-                      label: 'Today',
+                      label: 'This Month',
                       color: chartTextColor,
                       formatter: function () {
-                        return '100%';
+                        var series = monthlyMixData.series || [0, 0, 0, 0, 0];
+                        return series.reduce(function (sum, value) { return sum + value; }, 0).toString();
                       }
                     }
                   }

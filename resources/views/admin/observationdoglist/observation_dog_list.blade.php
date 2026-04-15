@@ -246,48 +246,6 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <td>1</td>
-                            <td>48</td>
-                            <td>Rajkot Municipan Corporation</td>
-                            <td>street</td>
-                            <td>female</td>
-                            <td>Bhagavti para,Rajkot Gujarat-360003 India</td>
-                            <td><img src="dog1.jpg" alt="Dog Image" width="50"></td>
-                            <td>2023-01-01</td>
-                            <td class="action-icons">
-                              <a href="{{ route('view-observation-dog-list') }}" class="btn btn-sm action-icon-btn action-view text-info" title="View">
-                                <i class="bx bx-show"></i>
-                              </a>
-                              <button type="button" class="btn btn-sm action-icon-btn action-expired text-danger" title="Expired" >
-                                <i class="fas fa-circle-xmark"></i>
-                              </button>
-                              <button type="button" class="btn btn-sm action-icon-btn action-expired text-danger" title="Expired" >
-                                R4R
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>2</td>
-                            <td>47</td>
-                            <td>Rajkot Municipan Corporation</td>
-                            <td>street</td>
-                            <td>female</td>
-                            <td>Bhagavti para,Rajkot Gujarat-360003 India</td>
-                            <td><img src="dog2.jpg" alt="Dog Image" width="50"></td>
-                            <td>2023-02-01</td>
-                            <td class="action-icons">
-                              <a href="view_observation_dog.html" class="btn btn-sm action-icon-btn action-view text-info" title="View">
-                                <i class="bx bx-show"></i>
-                              </a>
-                              <button type="button" class="btn btn-sm action-icon-btn action-expired text-danger" title="Expired" >
-                                <i class="fas fa-circle-xmark"></i>
-                              </button>
-                              <button type="button" class="btn btn-sm action-icon-btn action-expired text-danger" title="Expired" >
-                                R4R
-                              </button>
-                            </td>
-                          </tr>
                         </tbody>
                       </table>
                     </div>
@@ -296,4 +254,124 @@
               </div>
             </div>
             <!-- / Content -->
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+  var observationTable = $('#observation-dog-master-table').DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: "{{ route('manage-observation-dog-list') }}",
+    columns: [
+      {data: 'DT_RowIndex', orderable: false, searchable: false},
+      {data: 'tag_no'},
+      {data: 'project_name'},
+      {data: 'dog_type'},
+      {data: 'gender'},
+      {data: 'address'},
+      {data: 'image'},
+      {data: 'catch_date'},
+      {data: 'action', orderable: false, searchable: false}
+    ],
+    columnDefs: [
+      {
+        targets: 6,
+        render: function(data, type, row) {
+          if (!data) return '';
+          return '<img src="' + data + '" alt="Dog Image" class="city-image">';
+        }
+      }
+    ],
+    rowCallback: function(row, data, index) {
+      // Ensure image column is properly rendered
+      $(row).find('td:eq(6)').html('<img src="' + data.image + '" alt="Dog Image" class="city-image">');
+    }
+  });
+
+  // R4R button handler
+  $(document).on('click', '.action-r4r', function() {
+    var id = $(this).data('id');
+    var tagNo = $(this).data('tag-no');
+    Swal.fire({
+      title: 'Move to R4R?',
+      text: 'Dog ' + tagNo + ' will be marked as Ready for Release.',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Move to R4R',
+      cancelButtonText: 'Cancel'
+    }).then(result => {
+      if(result.isConfirmed) {
+        $.ajax({
+          url: "{{ url('observation/update-status') }}/" + id,
+          type: 'POST',
+          data: {status: 'R4R', remarks: ''},
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          success: function(r) {
+            if(r.status === 'success') {
+              Swal.fire('Success', r.message, 'success');
+              observationTable.ajax.reload();
+            } else {
+              Swal.fire('Error', r.message, 'error');
+            }
+          },
+          error: function(xhr) {
+            Swal.fire('Error', 'Something went wrong', 'error');
+          }
+        });
+      }
+    });
+  });
+
+  // Expired button handler (with textarea for remarks)
+  $(document).on('click', '.action-expired', function() {
+    var id = $(this).data('id');
+    var tagNo = $(this).data('tag-no');
+    Swal.fire({
+      title: 'Mark as Expired?',
+      input: 'textarea',
+      inputPlaceholder: 'Enter reason for expiry...',
+      inputAttributes: {
+        'aria-label': 'Enter reason for expiry'
+      },
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Mark as Expired',
+      cancelButtonText: 'Cancel'
+    }).then(result => {
+      if(result.isConfirmed) {
+        $.ajax({
+          url: "{{ url('observation/update-status') }}/" + id,
+          type: 'POST',
+          data: {status: 'Expired', remarks: result.value},
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          success: function(r) {
+            if(r.status === 'success') {
+              Swal.fire('Success', r.message, 'success');
+              observationTable.ajax.reload();
+            } else {
+              Swal.fire('Error', r.message, 'error');
+            }
+          },
+          error: function(xhr) {
+            Swal.fire('Error', 'Something went wrong', 'error');
+          }
+        });
+      }
+    });
+  });
+
+  // View link handler
+  $(document).on('click', '.action-view', function(e) {
+    e.preventDefault();
+    var id = $(this).data('id');
+    window.location.href = "{{ url('view-observation-dog-list') }}/" + id;
+  });
+});
+</script>
+@endpush
+
 @endsection

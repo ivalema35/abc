@@ -366,5 +366,37 @@
             <!-- / Footer -->
 
             <div class="content-backdrop fade"></div>
-            
+
+    @push('scripts')
+      <script>
+        window.dashboardLifecycleCounts = {
+          totalCaught: @json($totalCaughtCount ?? 0),
+          todaysCatch: @json($todaysCatchCount ?? 0),
+          inProcess: @json($inProcessCount ?? 0),
+          observation: @json($observationCount ?? 0),
+          released: @json($releasedCount ?? 0),
+          expired: @json($expiredCount ?? 0)
+        };
+
+        window.dashboardChartData = {
+          weekly: {
+            labels: @json($weeklyLabels ?? []),
+            caught: @json($weeklyCaught ?? []),
+            released: @json($weeklyReleased ?? []),
+            expired: @json($weeklyExpired ?? [])
+          },
+          monthlyMix: {
+            labels: ['In Process', 'Observation', 'R4R', 'Released', 'Expired'],
+            series: [
+              @json($monthlyMix['inProcess'] ?? 0),
+              @json($monthlyMix['observation'] ?? 0),
+              @json($monthlyMix['r4r'] ?? 0),
+              @json($monthlyMix['released'] ?? 0),
+              @json($monthlyMix['expired'] ?? 0)
+            ]
+          }
+        };
+      </script>
+    @endpush
+
     @endsection
