@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\City;
 use App\Models\CatchingRecord;
 use App\Models\CatchingStaff;
+use App\Models\DogStageLog;
 use App\Models\Hospital;
 use App\Models\Project;
 use App\Models\Vehicle;
@@ -19,7 +20,7 @@ class CatchingRecordController extends Controller
     {
         $this->middleware('permission:view catching record', ['only' => ['index', 'show']]);
         $this->middleware('permission:add catching record', ['only' => ['create', 'store']]);
-        $this->middleware('permission:edit catching record', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:edit catching record', ['only' => ['edit', 'update', 'quickRelease']]);
         $this->middleware('permission:delete catching record', ['only' => ['destroy']]);
     }
 
@@ -82,13 +83,24 @@ class CatchingRecordController extends Controller
 
     public function create()
     {
-        return $this->index(request());
+        $cities = City::where('is_active', 1)->select('id', 'city_name')->get();
+        $projects = Project::where('is_active', 1)->select('id', 'name', 'city_id')->get();
+        $hospitals = Hospital::where('is_active', 1)->select('id', 'name', 'city_id')->get();
+        $catchingStaffs = CatchingStaff::where('is_active', 1)->select('id', 'name', 'city_id')->get();
+        $vehicles = Vehicle::where('is_active', 1)->select('id', 'vehicle_number')->get();
+
+        return view('admin.catching_records.form_catching_record', compact(
+            'cities',
+            'projects',
+            'hospitals',
+            'catchingStaffs',
+            'vehicles'
+        ));
     }
 
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'id' => ['nullable', 'exists:catching_records,id'],
             'project_id' => ['required', 'exists:projects,id'],
             'hospital_id' => ['required', 'exists:hospitals,id'],
             'catching_staff_id' => ['required', 'exists:catching_staff,id'],
@@ -100,10 +112,10 @@ class CatchingRecordController extends Controller
             'street' => ['nullable', 'string', 'max:255'],
             'owner_name' => ['nullable', 'string', 'max:255'],
             'address' => ['nullable', 'string'],
+            'latitude' => ['nullable', 'string'],
+            'longitude' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
         ]);
-
-        $existingRecord = $request->filled('id') ? CatchingRecord::findOrFail($request->id) : null;
 
         if ($request->hasFile('image')) {
             $directory = public_path('uploads/catching_records');
@@ -111,36 +123,29 @@ class CatchingRecordController extends Controller
                 mkdir($directory, 0777, true);
             }
 
-            if ($existingRecord && $existingRecord->image && file_exists(public_path($existingRecord->image))) {
-                unlink(public_path($existingRecord->image));
-            }
-
             $file = $request->file('image');
             $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move($directory, $filename);
             $validated['image'] = 'uploads/catching_records/' . $filename;
-        } elseif ($existingRecord) {
-            $validated['image'] = $existingRecord->image;
         }
 
-        $record = CatchingRecord::updateOrCreate(
-            ['id' => $request->input('id')],
-            [
-                'project_id' => $validated['project_id'],
-                'hospital_id' => $validated['hospital_id'],
-                'catching_staff_id' => $validated['catching_staff_id'],
-                'vehicle_id' => $validated['vehicle_id'],
-                'tag_no' => $validated['tag_no'] ?? null,
-                'catch_date' => $validated['catch_date'],
-                'dog_type' => $validated['dog_type'],
-                'gender' => $validated['gender'] ?? null,
-                'street' => $validated['street'] ?? null,
-                'owner_name' => $validated['owner_name'] ?? null,
-                'address' => $validated['address'] ?? null,
-                'image' => $validated['image'] ?? null,
-                'is_active' => $existingRecord ? $existingRecord->is_active : true,
-            ]
-        );
+        $record = CatchingRecord::create([
+            'project_id' => $validated['project_id'],
+            'hospital_id' => $validated['hospital_id'],
+            'catching_staff_id' => $validated['catching_staff_id'],
+            'vehicle_id' => $validated['vehicle_id'],
+            'tag_no' => $validated['tag_no'] ?? null,
+            'catch_date' => $validated['catch_date'],
+            'dog_type' => $validated['dog_type'],
+            'gender' => $validated['gender'] ?? null,
+            'street' => $validated['street'] ?? null,
+            'owner_name' => $validated['owner_name'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'latitude' => $validated['latitude'] ?? null,
+            'longitude' => $validated['longitude'] ?? null,
+            'image' => $validated['image'] ?? null,
+            'is_active' => true,
+        ]);
 
         return response()->json([
             'status' => 'success',
@@ -197,31 +202,117 @@ class CatchingRecordController extends Controller
         ]);
     }
 
-    public function show($id): JsonResponse
+    public function show($id)
     {
         $record = CatchingRecord::with(['project', 'hospital', 'catchingStaff', 'vehicle'])->findOrFail($id);
+        $vehicles = Vehicle::where('is_active', 1)->select('id', 'vehicle_number')->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $record,
-        ]);
+        return view('admin.catching_records.view_catching_record', compact('record', 'vehicles'));
     }
 
-    public function edit($id): JsonResponse
+    public function edit($id)
     {
         $record = CatchingRecord::with(['project', 'hospital', 'catchingStaff', 'vehicle'])->findOrFail($id);
+        $cities = City::where('is_active', 1)->select('id', 'city_name')->get();
+        $projects = Project::where('is_active', 1)->select('id', 'name', 'city_id')->get();
+        $hospitals = Hospital::where('is_active', 1)->select('id', 'name', 'city_id')->get();
+        $catchingStaffs = CatchingStaff::where('is_active', 1)->select('id', 'name', 'city_id')->get();
+        $vehicles = Vehicle::where('is_active', 1)->select('id', 'vehicle_number')->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $record,
-        ]);
+        return view('admin.catching_records.form_catching_record', compact(
+            'record',
+            'cities',
+            'projects',
+            'hospitals',
+            'catchingStaffs',
+            'vehicles'
+        ));
     }
 
     public function update(Request $request, $id): JsonResponse
     {
-        $request->merge(['id' => $id]);
+        $validated = $request->validate([
+            'project_id' => ['required', 'exists:projects,id'],
+            'hospital_id' => ['required', 'exists:hospitals,id'],
+            'catching_staff_id' => ['required', 'exists:catching_staff,id'],
+            'vehicle_id' => ['required', 'exists:vehicles,id'],
+            'tag_no' => ['nullable', 'string', 'max:255'],
+            'catch_date' => ['required', 'date'],
+            'dog_type' => ['required', 'in:stray,pet'],
+            'gender' => ['nullable', 'in:male,female'],
+            'street' => ['nullable', 'string', 'max:255'],
+            'owner_name' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string'],
+            'latitude' => ['nullable', 'string'],
+            'longitude' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
+        ]);
 
-        return $this->store($request);
+        $record = CatchingRecord::findOrFail($id);
+
+        if ($request->hasFile('image')) {
+            $directory = public_path('uploads/catching_records');
+            if (!file_exists($directory)) {
+                mkdir($directory, 0777, true);
+            }
+
+            if ($record->image && file_exists(public_path($record->image))) {
+                unlink(public_path($record->image));
+            }
+
+            $file = $request->file('image');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move($directory, $filename);
+            $validated['image'] = 'uploads/catching_records/' . $filename;
+        } else {
+            $validated['image'] = $record->image;
+        }
+
+        $record->update([
+            'project_id' => $validated['project_id'],
+            'hospital_id' => $validated['hospital_id'],
+            'catching_staff_id' => $validated['catching_staff_id'],
+            'vehicle_id' => $validated['vehicle_id'],
+            'tag_no' => $validated['tag_no'] ?? null,
+            'catch_date' => $validated['catch_date'],
+            'dog_type' => $validated['dog_type'],
+            'gender' => $validated['gender'] ?? null,
+            'street' => $validated['street'] ?? null,
+            'owner_name' => $validated['owner_name'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'latitude' => $validated['latitude'] ?? null,
+            'longitude' => $validated['longitude'] ?? null,
+            'image' => $validated['image'] ?? null,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Catching record updated successfully!',
+            'record' => [
+                'id' => $record->id,
+                'tag_no' => $record->tag_no,
+            ],
+        ]);
+    }
+
+    public function quickRelease($id): JsonResponse
+    {
+        $record = CatchingRecord::findOrFail($id);
+        $record->update([
+            'status' => 'Released',
+        ]);
+
+        DogStageLog::create([
+            'catching_record_id' => $record->id,
+            'stage' => 'Released',
+            'action_by' => auth()->id(),
+            'remarks' => 'Quick Released directly from Catcher Profile view.',
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Dog released successfully.',
+        ]);
     }
 
     public function destroy($id): JsonResponse

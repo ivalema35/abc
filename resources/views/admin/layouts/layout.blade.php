@@ -968,10 +968,10 @@
               </a>
             </li>
             @endcan
-            <li class="menu-item">
+            <li class="menu-item {{ request()->routeIs('catching-records.*') ? 'active' : '' }}">
               <a href="{{ route('catching-records.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-user-pin"></i>
-                <div class="text-truncate" data-i18n="Catching Records">Catching Records</div>
+                <div class="text-truncate" data-i18n="Dog Catcher List">Dog Catcher List</div>
               </a>
             </li>
             <li class="menu-item {{ request()->is('manage-catch-process') || request()->is('manage-process-dog-list') || request()->is('manage-observation-dog-list') || request()->is('manage-r4r-dog-list') || request()->is('project-summary') || request()->is('daily-running-sheet') || request()->is('manage-completed-operation-dog-list') ? 'active' : '' }}">

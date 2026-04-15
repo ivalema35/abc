@@ -27,6 +27,8 @@ class CatchingRecord extends Model
         'street',
         'owner_name',
         'address',
+        'latitude',
+        'longitude',
         'image',
         'status',
         'is_active',

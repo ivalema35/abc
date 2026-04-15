@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ArvStaffController;
 use App\Http\Controllers\Admin\BillMasterController;
 use App\Http\Controllers\Admin\CatchingStaffController;
 use App\Http\Controllers\Admin\CatchingRecordController;
+use App\Http\Controllers\Admin\CatchProcessController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DoctorController;
 use App\Http\Controllers\Admin\DogOperationController;
@@ -104,13 +105,14 @@ Route::middleware('auth')->group(function () {
 
     Route::get('catching-records/city-masters', [CatchingRecordController::class, 'cityMasters'])->name('catching-records.city-masters');
     Route::get('catching-records/project-staff', [CatchingRecordController::class, 'projectStaff'])->name('catching-records.project-staff');
-    Route::resource('catching-records', CatchingRecordController::class);
+    Route::get('catching-records/create', [CatchingRecordController::class, 'create'])->name('catching-records.create');
+    Route::get('catching-records/{id}/edit', [CatchingRecordController::class, 'edit'])->name('catching-records.edit');
+    Route::post('catching-records/{id}/quick-release', [CatchingRecordController::class, 'quickRelease'])->name('catching-records.quick-release');
+    Route::resource('catching-records', CatchingRecordController::class)->except(['create', 'edit']);
     Route::post('dog-operations', [DogOperationController::class, 'store'])->name('dog-operations.store');
 
     // catchprocess routes
-    Route::get('/manage-catch-process', function () {
-        return view('admin.catchprocess.catch_process');
-    })->name('manage-catch-process');
+    Route::get('/manage-catch-process', [CatchProcessController::class, 'index'])->name('manage-catch-process');
 
     // dieddoglist routes
     Route::get('/expired-dog-list', function () {

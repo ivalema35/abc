@@ -223,48 +223,6 @@
       white-space: nowrap;
     }
 
-    .modal-header-black {
-      background-color: #000000;
-      color: #ffffff;
-    }
-
-    #catchingRecordModal .modal-content {
-      border-radius: 0.9rem;
-      border: 1px solid #dfe3eb;
-      box-shadow: 0 0.2rem 0.8rem rgba(67, 89, 113, 0.12);
-      overflow: hidden;
-    }
-
-    #catchingRecordModal .modal-body {
-      padding: 1.5rem;
-    }
-
-    #catchingRecordModal .form-label {
-      font-weight: 600;
-      color: #3f4a59;
-    }
-
-    #catchingRecordModal .form-control,
-    #catchingRecordModal .form-select {
-      min-height: 2.8rem;
-      font-size: 0.98rem;
-    }
-
-    #catchingRecordModal .modal-footer .btn {
-      min-width: 128px;
-      min-height: 2.8rem;
-      font-weight: 600;
-    }
-
-    .modal-header-black .btn-close {
-      background-color: #e8e7e7 !important;
-      border: 0 !important;
-      box-shadow: none !important;
-      margin-left: auto;
-      opacity: 1 !important;
-      filter: none !important;
-    }
-
     @media (max-width: 767.98px) {
       .project-top-bar {
         padding: 0.9rem 1rem;
@@ -296,9 +254,9 @@
         </nav>
       </div>
       @can('add catching record')
-        <button type="button" class="addbtn btn btn-dark" data-bs-toggle="modal" data-bs-target="#catchingRecordModal" id="addCatchingRecordBtn">
+        <a href="{{ route('catching-records.create') }}" class="addbtn btn btn-dark">
           <i class="fa-solid fa-plus me-1"></i> Add Record
-        </button>
+        </a>
       @endcan
     </div>
 
@@ -330,135 +288,9 @@
   </div>
 </div>
 
-<div class="modal fade" id="catchingRecordModal" tabindex="-1" aria-labelledby="catchingRecordModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header modal-header-black bg-dark text-white p-3">
-        <h5 class="modal-title text-white" id="catchingRecordModalLabel">Add Catching Record</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form id="catchingRecordForm" enctype="multipart/form-data">
-        @csrf
-        <input type="hidden" id="catchingRecordId" name="id" value="">
-        <div class="modal-body">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label" for="city_filter_id">City <span class="text-danger">*</span></label>
-              <select id="city_filter_id" class="form-select">
-                <option value="" selected>Select city</option>
-                @foreach($cities as $city)
-                  <option value="{{ $city->id }}">{{ $city->city_name }}</option>
-                @endforeach
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="project_id">Project <span class="text-danger">*</span></label>
-              <select id="project_id" name="project_id" class="form-select" disabled>
-                <option value="" selected>Select project</option>
-                @foreach($projects as $project)
-                  <option value="{{ $project->id }}">{{ $project->name }}</option>
-                @endforeach
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="hospital_id">Hospital <span class="text-danger">*</span></label>
-              <select id="hospital_id" name="hospital_id" class="form-select" disabled>
-                <option value="" selected>Select hospital</option>
-                @foreach($hospitals as $hospital)
-                  <option value="{{ $hospital->id }}">{{ $hospital->name }}</option>
-                @endforeach
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="catching_staff_id">Catching Staff <span class="text-danger">*</span></label>
-              <select id="catching_staff_id" name="catching_staff_id" class="form-select" disabled>
-                <option value="" selected>Select staff</option>
-                @foreach($staff as $person)
-                  <option value="{{ $person->id }}">{{ $person->name }}</option>
-                @endforeach
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="vehicle_id">Vehicle <span class="text-danger">*</span></label>
-              <select id="vehicle_id" name="vehicle_id" class="form-select">
-                <option value="" selected disabled>Select vehicle</option>
-                @foreach($vehicles as $vehicle)
-                  <option value="{{ $vehicle->id }}">{{ $vehicle->vehicle_number }}</option>
-                @endforeach
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="catch_date">Catch Date <span class="text-danger">*</span></label>
-              <input type="date" id="catch_date" name="catch_date" class="form-control">
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="tag_no">Tag No</label>
-              <input type="text" id="tag_no" name="tag_no" class="form-control" placeholder="Enter tag number">
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="dog_type">Dog Type <span class="text-danger">*</span></label>
-              <select id="dog_type" name="dog_type" class="form-select">
-                <option value="stray">Stray</option>
-                <option value="pet">Pet</option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="gender">Gender</label>
-              <select id="gender" name="gender" class="form-select">
-                <option value="" selected>Select gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="street">Street</label>
-              <input type="text" id="street" name="street" class="form-control" placeholder="Enter street name">
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="owner_name">Owner</label>
-              <input type="text" id="owner_name" name="owner_name" class="form-control" placeholder="Enter owner name">
-            </div>
-
-            <div class="col-12">
-              <label class="form-label" for="address">Address</label>
-              <textarea id="address" name="address" class="form-control" rows="3" placeholder="Enter address"></textarea>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="image">Image</label>
-              <input type="file" id="image" name="image" class="form-control" accept="image/*">
-              <img id="catchingRecordImagePreview" class="mt-2 rounded" width="100" alt="Preview" style="display:none;">
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-dark" id="catchingRecordSubmitBtn">Save Record</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
 @push('scripts')
 <script>
 $(function () {
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
-
   var table = $('#catching-records-table').DataTable({
     processing: true,
     serverSide: true,
@@ -472,201 +304,27 @@ $(function () {
       { data: 'address', name: 'address', orderable: false, searchable: false },
       { data: 'image', name: 'image', orderable: false, searchable: false },
       { data: 'catch_date', name: 'catch_date' },
-      { data: 'action', name: 'action', orderable: false, searchable: false }
+      {
+        data: 'action',
+        name: 'action',
+        orderable: false,
+        searchable: false,
+        render: function (data, type, row) {
+          var viewButton = '<button type="button" class="btn action-icon-btn text-info me-2 item-view" data-id="' + row.id + '" title="View"><i class="bx bx-show"></i></button>';
+          return '<div class="d-inline-block action-icons">' + viewButton + (data || '') + '</div>';
+        }
+      }
     ]
   });
 
-  function resetModal() {
-    $('#catchingRecordForm')[0].reset();
-    $('#catchingRecordId').val('');
-    $('#catchingRecordModalLabel').text('Add Catching Record');
-    $('#catchingRecordSubmitBtn').text('Save Record');
-    $('#catchingRecordImagePreview').attr('src', '').hide();
-    clearValidationErrors();
-    resetDependentSelect($('#project_id'), 'Select project', true);
-    resetDependentSelect($('#hospital_id'), 'Select hospital', true);
-    resetDependentSelect($('#catching_staff_id'), 'Select staff', true);
-  }
-
-  function resetDependentSelect($select, placeholder, shouldDisable) {
-    $select.empty().append('<option value="">' + placeholder + '</option>');
-    $select.prop('disabled', !!shouldDisable);
-  }
-
-  function populateSelect($select, items, placeholder, textKey) {
-    resetDependentSelect($select, placeholder, false);
-    $.each(items || [], function (_, item) {
-      $select.append('<option value="' + item.id + '">' + item[textKey] + '</option>');
-    });
-  }
-
-  function clearValidationErrors() {
-    $('#catchingRecordForm .is-invalid').removeClass('is-invalid');
-    $('#catchingRecordForm .invalid-feedback.dynamic-validation').remove();
-  }
-
-  function renderValidationErrors(errors) {
-    clearValidationErrors();
-
-    $.each(errors || {}, function (field, messages) {
-      var $field = $('#catchingRecordForm').find('[name="' + field + '"]');
-      if (!$field.length) {
-        return;
-      }
-
-      $field.addClass('is-invalid');
-      $field.after('<div class="invalid-feedback dynamic-validation">' + messages[0] + '</div>');
-    });
-  }
-
-  $('#city_filter_id').on('change', function () {
-    var cityId = $(this).val();
-
-    resetDependentSelect($('#project_id'), 'Select project', true);
-    resetDependentSelect($('#hospital_id'), 'Select hospital', true);
-    resetDependentSelect($('#catching_staff_id'), 'Select staff', true);
-
-    if (!cityId) {
-      return;
-    }
-
-    $.ajax({
-      url: "{{ route('catching-records.city-masters') }}",
-      method: 'GET',
-      data: { city_id: cityId },
-      success: function (response) {
-        populateSelect($('#project_id'), response.projects || [], 'Select project', 'name');
-        populateSelect($('#hospital_id'), response.hospitals || [], 'Select hospital', 'name');
-      },
-      error: function () {
-        showToast('error', 'Unable to load projects and hospitals for selected city.');
-      }
-    });
-  });
-
-  $('#project_id').on('change', function () {
-    var projectId = $(this).val();
-
-    resetDependentSelect($('#catching_staff_id'), 'Select staff', true);
-
-    if (!projectId) {
-      return;
-    }
-
-    $.ajax({
-      url: "{{ route('catching-records.project-staff') }}",
-      method: 'GET',
-      data: { project_id: projectId },
-      success: function (response) {
-        populateSelect($('#catching_staff_id'), response.staff || [], 'Select staff', 'name');
-      },
-      error: function () {
-        showToast('error', 'Unable to load staff for selected project.');
-      }
-    });
-  });
-
-  $('#addCatchingRecordBtn').on('click', function () {
-    resetModal();
-  });
-
-  $('#image').on('change', function () {
-    var file = this.files[0];
-
-    if (!file) {
-      return;
-    }
-
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      $('#catchingRecordImagePreview').attr('src', e.target.result).show();
-    };
-    reader.readAsDataURL(file);
-  });
-
-  $('#catchingRecordForm').on('submit', function (e) {
-    e.preventDefault();
-    clearValidationErrors();
-
-    var recordId = $('#catchingRecordId').val();
-    var isEdit = recordId !== '';
-    var url = isEdit ? "{{ url('catching-records') }}/" + recordId : "{{ route('catching-records.store') }}";
-    var formData = new FormData(this);
-    var submitBtn = $('#catchingRecordSubmitBtn');
-    var originalText = submitBtn.text();
-
-    submitBtn.text('Saving...').prop('disabled', true);
-
-    if (isEdit) {
-      formData.append('_method', 'PUT');
-    }
-
-    $.ajax({
-      url: url,
-      method: 'POST',
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: function (response) {
-        submitBtn.text(originalText).prop('disabled', false);
-        showToast('success', response.message);
-        $('#catchingRecordModal').modal('hide');
-        resetModal();
-        table.ajax.reload(null, false);
-      },
-      error: function (xhr) {
-        submitBtn.text(originalText).prop('disabled', false);
-        var errors = xhr.responseJSON && xhr.responseJSON.errors ? xhr.responseJSON.errors : null;
-
-        if (errors) {
-          renderValidationErrors(errors);
-        }
-
-        showToast('error', (xhr.responseJSON && xhr.responseJSON.message) || 'Please fix the highlighted fields.');
-      }
-    });
+  $(document).on('click', '.item-view', function () {
+    var recordId = $(this).data('id');
+    window.location.href = '/catching-records/' + recordId;
   });
 
   $(document).on('click', '.item-edit', function () {
     var recordId = $(this).data('id');
-
-    $.ajax({
-      url: "{{ url('catching-records') }}/" + recordId + '/edit',
-      method: 'GET',
-      success: function (response) {
-        if (response && response.data) {
-          var record = response.data;
-
-          $('#catchingRecordId').val(record.id);
-          $('#city_filter_id').val('');
-          $('#project_id').val(record.project_id);
-          $('#hospital_id').val(record.hospital_id);
-          $('#catching_staff_id').val(record.catching_staff_id);
-          $('#vehicle_id').val(record.vehicle_id);
-          $('#project_id, #hospital_id, #catching_staff_id').prop('disabled', false);
-          $('#catch_date').val(record.catch_date ? String(record.catch_date).substring(0, 10) : '');
-          $('#tag_no').val(record.tag_no);
-          $('#dog_type').val(record.dog_type);
-          $('#gender').val(record.gender);
-          $('#street').val(record.street);
-          $('#owner_name').val(record.owner_name);
-          $('#address').val(record.address);
-          $('#catchingRecordModalLabel').text('Edit Catching Record');
-          $('#catchingRecordSubmitBtn').text('Update Record');
-
-          if (record.image) {
-            $('#catchingRecordImagePreview').attr('src', "{{ url('/') }}/" + record.image).show();
-          } else {
-            $('#catchingRecordImagePreview').attr('src', '').hide();
-          }
-
-          $('#catchingRecordModal').modal('show');
-        }
-      },
-      error: function () {
-        showToast('error', 'Unable to load catching record details.');
-      }
-    });
+    window.location.href = '/catching-records/' + recordId + '/edit';
   });
 
   $(document).on('click', '.item-delete', function () {
@@ -688,9 +346,6 @@ $(function () {
     });
   });
 
-  $('#catchingRecordModal').on('hidden.bs.modal', function () {
-    resetModal();
-  });
 });
 </script>
 @endpush

@@ -420,7 +420,7 @@
                   <div class="card metric-click-card h-100">
                     <a href="{{ route('catching-records.index') }}" class="text-decoration-none text-body d-block h-100">
                       <div class="card-body">
-                        <span class="badge rounded-pill bg-label-dark metric-value-badge">12</span>
+                        <span class="badge rounded-pill bg-label-dark metric-value-badge">{{ $counts['Caught'] ?? 0 }}</span>
                         <div class="avatar metric-icon mb-2 fs-3">
                           <i class="fa-solid fa-crosshairs"></i>
                         </div>
@@ -433,7 +433,7 @@
                   <div class="card metric-click-card h-100">
                     <a href="{{ route('manage-received-dog-list') }}" class="text-decoration-none text-body d-block h-100">
                       <div class="card-body">
-                        <span class="badge rounded-pill bg-label-dark metric-value-badge">13</span>
+                        <span class="badge rounded-pill bg-label-dark metric-value-badge">{{ $counts['Received'] ?? 0 }}</span>
                         <div class="avatar metric-icon mb-2 fs-3">
                           <i class="fa-solid fa-inbox"></i>
                         </div>
@@ -447,7 +447,7 @@
                   <div class="card metric-click-card h-100">
                     <a href="{{ route('manage-process-dog-list') }}" class="text-decoration-none text-body d-block h-100">
                       <div class="card-body">
-                        <span class="badge rounded-pill bg-label-dark metric-value-badge">14</span>
+                        <span class="badge rounded-pill bg-label-dark metric-value-badge">{{ $counts['Surgery'] ?? ($counts['Process'] ?? 0) }}</span>
                         <div class="avatar metric-icon mb-2 fs-3">
                           <i class="fa-solid fa-gears"></i>
                         </div>
@@ -460,7 +460,7 @@
                   <div class="card metric-click-card h-100">
                     <a href="{{ route('manage-observation-dog-list') }}" class="text-decoration-none text-body d-block h-100">
                       <div class="card-body">
-                        <span class="badge rounded-pill bg-label-dark metric-value-badge">15</span>
+                        <span class="badge rounded-pill bg-label-dark metric-value-badge">{{ $counts['Observation'] ?? 0 }}</span>
                         <div class="avatar metric-icon mb-2 fs-3">
                           <i class="fa-solid fa-eye"></i>
                         </div>
@@ -473,7 +473,7 @@
                   <div class="card metric-click-card h-100">
                     <a href="{{ route('manage-r4r-dog-list') }}" class="text-decoration-none text-body d-block h-100">
                       <div class="card-body">
-                        <span class="badge rounded-pill bg-label-dark metric-value-badge">16</span>
+                        <span class="badge rounded-pill bg-label-dark metric-value-badge">{{ $counts['Ready for Release'] ?? 0 }}</span>
                         <div class="avatar metric-icon mb-2 fs-3">
                           <i class="fa-solid fa-location-dot"></i>
                         </div>
@@ -486,7 +486,7 @@
                   <div class="card metric-click-card h-100">
                     <a href="{{ route('dispose-pending-dog-list') }}" class="text-decoration-none text-body d-block h-100">
                       <div class="card-body">
-                        <span class="badge rounded-pill bg-label-dark metric-value-badge">18</span>
+                        <span class="badge rounded-pill bg-label-dark metric-value-badge">{{ $counts['Expired'] ?? 0 }}</span>
                         <div class="avatar metric-icon mb-2 fs-3">
                           <i class="fa-solid fa-hourglass-half"></i>
                         </div>
@@ -499,7 +499,7 @@
                   <div class="card metric-click-card h-100">
                     <a href="{{ route('rejected-dog-list') }}" class="text-decoration-none text-body d-block h-100">
                       <div class="card-body">
-                        <span class="badge rounded-pill bg-label-dark metric-value-badge">17</span>
+                        <span class="badge rounded-pill bg-label-dark metric-value-badge">{{ $counts['Rejected'] ?? 0 }}</span>
                         <div class="avatar metric-icon mb-2 fs-3">
                           <i class="fa-solid fa-circle-xmark"></i>
                         </div>
@@ -512,7 +512,7 @@
                   <div class="card metric-click-card h-100">
                     <a href="{{ route('project-summary') }}" class="text-decoration-none text-body d-block h-100">
                       <div class="card-body">
-                        <span class="badge rounded-pill bg-label-dark metric-value-badge">19</span>
+                        
                         <div class="avatar metric-icon mb-2 fs-3">
                           <i class="fa-solid fa-chart-column"></i>
                         </div>
@@ -525,7 +525,7 @@
                   <div class="card metric-click-card h-100">
                     <a href="{{ route('daily-running-sheet') }}" class="text-decoration-none text-body d-block h-100">
                       <div class="card-body">
-                        <span class="badge rounded-pill bg-label-dark metric-value-badge">14</span>
+                       
                         <div class="avatar metric-icon mb-2 fs-3">
                           <i class="fa-solid fa-calendar-check"></i>
                         </div>
